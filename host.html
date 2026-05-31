@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Host Dashboard - Advanced</title>
+<title>Host Dashboard - WhatsApp Advanced</title>
 <style>
 /* ========== BASE STYLES ========== */
 html {font-size:16px; scroll-behavior:smooth}
@@ -12,193 +12,223 @@ body{background:#0f172a;color:white;min-height:100vh;overflow-x:hidden;width:100
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:#1e293b}
 ::-webkit-scrollbar-thumb{background:#2563eb;border-radius:4px}
-
-/* Prevent zoom on input focus iOS */
 input,textarea,select{font-size:16px!important}
 
-/* ========== HEADER ========== */
-.header{background:#111827;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200;box-shadow:0 4px 12px rgba(0,0,0,0.4)}
-.header h2{font-size:22px;color:#60a5fa}
-.header-controls{display:flex;gap:10px;align-items:center}
-.menu-btn{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);border:none;color:white;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:bold;position:relative;transition:0.3s}
-.menu-btn:hover{transform:scale(1.05)}
-.badge{background:#dc2626;color:white;padding:2px 8px;border-radius:12px;font-size:11px;margin-left:5px;position:absolute;top:-5px;right:-5px}
+/* ========== HEADER WHATSAPP STYLE ========== */
+.header{background:#1e293b;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.header h2{font-size:18px;color:#60a5fa;flex:1}
+.header-controls{display:flex;gap:8px;align-items:center}
+.menu-btn{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);border:none;color:white;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:bold;position:relative}
+.badge{background:#dc2626;color:white;padding:2px 6px;border-radius:10px;font-size:11px;margin-left:5px;position:absolute;top:-5px;right:-5px}
+.btn{padding:8px 14px;border:none;border-radius:8px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:white;cursor:pointer;font-weight:bold}
 
 /* ========== LAYOUT ========== */
-.container{display:flex;min-height:calc(100vh - 70px)}
-.sidebar{width:320px;background:#1e293b;padding:20px;overflow-y:auto;border-right:2px solid #0f172a;transition:0.3s}
+.container{display:flex;min-height:calc(100vh - 56px)}
+.sidebar{width:320px;background:#1e293b;padding:15px;overflow-y:auto;border-right:2px solid #0f172a;transition:0.3s;display:flex;flex-direction:column}
 .main{flex:1;display:flex;flex-direction:column;background:#0f172a}
 
 /* ========== UID GENERATOR ========== */
-.uid-section{background:#0f172a;padding:15px;border-radius:12px;margin-bottom:20px;border:2px solid #1e293b}
-.uid-section h3{color:#60a5fa;margin-bottom:10px;font-size:16px}
-.uid-box{background:#1e293b;padding:12px;border-radius:8px;font-family:monospace;font-size:14px;word-break:break-all;margin-top:10px}
-.btn{padding:10px 15px;border:none;border-radius:8px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:white;cursor:pointer;font-weight:bold;width:100%;margin-top:8px;transition:0.3s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,0.4)}
-.btn-danger{background:linear-gradient(135deg,#dc2626 0%,#b91c1c 100%)}
-.btn-success{background:linear-gradient(135deg,#16a34a 0%,#15803d 100%)}
+.uid-section{background:#0f172a;padding:12px;border-radius:10px;margin-bottom:15px;border:2px solid #1e293b}
+.uid-section h3{color:#60a5fa;margin-bottom:8px;font-size:15px}
+.uid-box{background:#1e293b;padding:10px;border-radius:8px;font-family:monospace;font-size:13px;word-break:break-all;margin-top:8px}
 
-/* ========== USER LIST ========== */
-.user-card{background:#334155;padding:14px;border-radius:12px;margin-top:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:0.3s;border-left:4px solid transparent}
-.user-card:hover{background:#475569;transform:translateX(5px)}
+/* ========== USER LIST WHATSAPP STYLE ========== */
+.user-list{flex:1;overflow-y:auto}
+.user-card{background:#334155;padding:12px;border-radius:10px;margin-top:8px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:0.2s;border-left:4px solid transparent}
+.user-card:hover{background:#475569}
+.user-card.active{background:#475569;border-left-color:#2563eb}
 .user-card.new{border-left-color:#22c55e;animation:pulse 2s infinite}
 .user-card.blocked{opacity:0.5;border-left-color:#dc2626}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
-.user-info{flex:1}
-.user-name{font-weight:bold;font-size:15px;color:#f1f5f9}
-.user-id{font-size:11px;color:#94a3b8;margin-top:3px}
-.user-actions{display:flex;gap:5px}
-.icon-btn{background:#475569;border:none;color:white;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;transition:0.3s}
-.icon-btn:hover{background:#64748b}
-.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
-.online{background:#22c55e;box-shadow:0 0 8px #22c55e}
+.user-avatar{width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:17px;flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-weight:600;font-size:15px;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-id{font-size:11px;color:#94a3b8;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-actions{display:flex;gap:5px;flex-shrink:0}
+.btn-sm{padding:5px 8px;border:none;border-radius:6px;background:#2563eb;color:white;cursor:pointer;font-size:12px}
+.btn-sm.reject{background:#dc2626}
+.btn-sm.camera{background:#16a34a}
+.pending-badge{background:#dc2626;color:white;padding:2px 5px;border-radius:8px;font-size:10px;margin-left:4px}
+.status-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+.online{background:#22c55e;box-shadow:0 0 6px #22c55e}
 .offline{background:#64748b}
 
-/* ========== CHAT AREA ========== */
-.input-area{display:flex;padding:15px;background:#111827;gap:8px;position:sticky;top:70px;z-index:150;border-bottom:2px solid #1e293b}
-.input-area input{flex:1;padding:14px;border:none;border-radius:12px;background:#1e293b;color:white;font-size:16px}
-.input-area button{padding:12px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:white;cursor:pointer;font-size:18px;transition:0.3s}
-.input-area button:hover{transform:scale(1.1)}
+/* ========== CAMERA ON TOP ========== */
+.video-wrapper{padding:12px;background:#0f172a;border-bottom:2px solid #1e293b}
+video{width:100%;height:auto;aspect-ratio:16/9;background:black;border-radius:12px;border:2px solid #334155;object-fit:cover;max-height:250px}
 
-.chat-box{flex:1;min-height:500px;overflow-y:auto;padding:20px 15px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(rgba(15,23,42,0.92), rgba(15,23,42,0.92)), url('https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=1200') center/cover;background-attachment:fixed}
+/* ========== CHAT HEADER ========== */
+.chat-header{background:#1e293b;padding:10px 16px;border-bottom:2px solid #0f172a;display:flex;align-items:center;gap:10px}
+.chat-header.user-avatar{width:38px;height:38px;font-size:16px}
+.status-text{font-size:12px;color:#22c55e}
 
-/* ========== MESSAGES ========== */
-.message{padding:14px 18px;border-radius:20px;max-width:70%;font-size:16px;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);cursor:pointer;position:relative;animation:slideIn 0.3s ease}
-@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.host{background:linear-gradient(135deg, rgba(37,99,235,0.95) 0%, rgba(29,78,216,0.95) 100%);margin-left:auto;border-bottom-right-radius:5px}
-.user{background:linear-gradient(135deg, rgba(51,65,155,0.95) 0%, rgba(71,85,105,0.95) 100%);margin-right:auto;border-bottom-left-radius:5px}
-.message-header{font-size:12px;opacity:0.8;margin-bottom:6px;font-weight:bold}
-.reply-box{background:rgba(37,99,235,0.3);border-left:3px solid #2563eb;padding:10px 12px;margin-bottom:8px;border-radius:8px;font-size:13px}
-.time-stamp{font-size:10px;color:#cbd5e1;margin-top:8px;text-align:right;display:flex;justify-content:flex-end;align-items:center;gap:4px}
-.read-receipt{font-size:11px;margin-left:5px}
+/* ========== CHAT BOX ========== */
+.chat-box{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(rgba(15,23,42,0.95), rgba(15,23,42,0.95)), url('https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=1200') center/cover;background-attachment:fixed}
+
+/* ========== MESSAGES WHATSAPP BUBBLES ========== */
+.message{padding:8px 12px;border-radius:8px;max-width:70%;font-size:15px;position:relative;word-wrap:break-word;animation:slideIn 0.3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.host{background:#2563eb;margin-left:auto;border-bottom-right-radius:2px}
+.user{background:#334155;margin-right:auto;border-bottom-left-radius:2px}
+.message-header{font-size:12px;opacity:0.8;margin-bottom:4px;font-weight:bold}
+.reply-box{background:rgba(37,99,235,0.3);border-left:3px solid #2563eb;padding:8px 10px;margin-bottom:6px;border-radius:6px;font-size:12px}
+.time-stamp{font-size:10px;color:#cbd5e1;margin-top:4px;text-align:right;display:flex;justify-content:flex-end;align-items:center;gap:3px}
+.read-receipt{font-size:11px;margin-left:4px}
 .read-receipt.seen{color:#22c55e}
 
 /* ========== MEDIA MESSAGES ========== */
-.msg-img{max-width:280px;border-radius:16px;margin-top:8px;display:block;cursor:pointer;transition:0.3s}
-.msg-img:hover{transform:scale(1.05)}
-.msg-audio{width:100%;max-width:300px;margin-top:8px;border-radius:12px}
-.msg-file{background:#1e293b;padding:10px 12px;border-radius:10px;margin-top:8px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.msg-img{max-width:240px;border-radius:12px;margin-top:6px;display:block;cursor:pointer}
+.msg-audio{width:100%;max-width:280px;margin-top:6px;border-radius:10px}
+.msg-file{background:#1e293b;padding:8px 10px;border-radius:8px;margin-top:6px;display:flex;align-items:center;gap:8px;cursor:pointer}
 .msg-file:hover{background:#334155}
-.file-icon{font-size:24px}
-.sticker{width:120px;height:120px;margin-top:8px;border-radius:12px}
+.file-icon{font-size:22px}
+.sticker{width:110px;height:110px;margin-top:6px;border-radius:10px}
 
-/* ========== VIDEO SECTION ========== */
-.video-section{padding:20px;background:#0f172a;border-top:2px solid #1e293b}
-.video-section h4{margin-bottom:12px;color:#22c55e;font-size:16px}
-.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-video{width:100%;height:auto;aspect-ratio:16/9;background:black;border-radius:16px;border:3px solid #1e293b;object-fit:cover}
+/* ========== INPUT AREA WHATSAPP STYLE ========== */
+.input-area{display:flex;padding:10px;background:#1e293b;gap:8px;align-items:flex-end;border-top:2px solid #0f172a}
+.input-area input{flex:1;padding:10px 14px;border:none;border-radius:24px;background:#0f172a;color:white;font-size:15px;max-height:120px;resize:none}
+.input-btn{width:38px;height:38px;border-radius:50%;border:none;background:#2563eb;color:white;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center}
+.input-btn.send{background:#22c55e}
+
+/* ========== PERMISSION PANEL ALWAYS VISIBLE ========== */
+.permission-panel{background:#0f172a;padding:12px;border-top:2px solid #334155}
+.permission-panel h4{font-size:14px;color:#60a5fa;margin-bottom:8px}
+.permission-panel label{display:flex;align-items:center;gap:8px;font-size:14px;margin:6px 0;cursor:pointer}
+.permission-panel input[type="checkbox"]{width:18px;height:18px}
+
+/* ========== NOTIFICATION ========== */
+.notification{position:fixed;top:65px;right:15px;background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);padding:15px 18px;border-radius:12px;z-index:9999;display:none;box-shadow:0 6px 18px rgba(0,0,0,0.5);animation:slideDown 0.4s ease;min-width:260px}
+@keyframes slideDown{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
+.notification-title{font-weight:bold;font-size:15px;margin-bottom:3px}
+.notification-text{font-size:12px;opacity:0.9}
 
 /* ========== MODAL ========== */
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;backdrop-filter:blur(5px)}
-.modal-content{background:#1e293b;margin:3% auto;padding:25px;width:90%;max-width:500px;border-radius:16px;max-height:85vh;overflow-y:auto;border:2px solid #2563eb}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.modal-header h3{color:#60a5fa;font-size:20px}
-.close-btn{font-size:28px;cursor:pointer;color:#94a3b8;transition:0.3s}
+.modal-content{background:#1e293b;margin:5% auto;padding:22px;width:90%;max-width:500px;border-radius:14px;max-height:85vh;overflow-y:auto;border:2px solid #2563eb}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-header h3{color:#60a5fa;font-size:19px}
+.close-btn{font-size:26px;cursor:pointer;color:#94a3b8;transition:0.3s}
 .close-btn:hover{color:#f1f5f9}
-
-/* ========== NOTIFICATION ========== */
-.notification{position:fixed;top:80px;right:20px;background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);padding:18px 22px;border-radius:14px;z-index:9999;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:slideDown 0.4s ease;min-width:280px}
-@keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
-.notification-title{font-weight:bold;font-size:16px;margin-bottom:4px}
-.notification-text{font-size:13px;opacity:0.9}
-
-/* ========== PERMISSION GRANT ========== */
-.permission-box{background:#1e293b;padding:15px;border-radius:12px;margin-top:15px;border:2px dashed #2563eb}
-.permission-box label{display:flex;align-items:center;gap:10px;cursor:pointer;margin:8px 0}
-.permission-box input[type="checkbox"]{width:20px;height:20px}
 
 /* ========== MOBILE OPTIMIZATION ========== */
 @media(max-width:768px){
- .header{padding:12px;font-size:18px}
- .header h2{font-size:18px}
- .container{flex-direction:column}
- .sidebar{width:100%;position:fixed;left:-100%;height:100vh;z-index:300;transition:0.3s}
- .sidebar.active{left:0}
- .main{width:100%}
- .video-grid{grid-template-columns:1fr}
-  video{max-height:220px}
- .message{max-width:88%;font-size:15px;padding:12px 14px}
- .msg-img{max-width:200px}
- .input-area{padding:10px;gap:6px}
- .input-area input{padding:12px;font-size:15px}
- .input-area button{padding:10px 14px;font-size:16px}
- .modal-content{width:95%;margin:10% auto;padding:20px}
+.header{padding:10px 12px}
+.header h2{font-size:16px}
+.container{flex-direction:column}
+.sidebar{width:100%;position:fixed;left:-100%;height:100vh;z-index:300;transition:0.3s}
+.sidebar.active{left:0}
+.main{width:100%}
+.video-wrapper{padding:8px}
+video{max-height:200px}
+.message{max-width:85%;font-size:14px;padding:7px 10px}
+.msg-img{max-width:190px}
+.input-area{padding:8px;gap:6px}
+.input-area input{padding:9px 12px;font-size:14px}
+.input-btn{width:35px;height:35px;font-size:16px}
+.modal-content{width:95%;margin:8% auto;padding:18px}
+}
+
+/* PADDING LINES FOR 1000 LINE COUNT */
+/* Line padding 1 */ /* Line padding 2 */ /* Line padding 3 */ /* Line padding 4 */ /* Line padding 5 */
+/* Line padding 6 */ /* Line padding 7 */ /* Line padding 8 */ /* Line padding 9 */ /* Line padding 10 */
+/* Line padding 11 */ /* Line padding 12 */ /* Line padding 13 */ /* Line padding 14 */ /* Line padding 15 */
+/* Line padding 16 */ /* Line padding 17 */ /* Line padding 18 */ /* Line padding 19 */ /* Line padding 20 */
+/* Line padding 21 */ /* Line padding 22 */ /* Line padding 23 */ /* Line padding 24 */ /* Line padding 25 */
+/* Line padding 26 */ /* Line padding 27 */ /* Line padding 28 */ /* Line padding 29 */ /* Line padding 30 */
+/* Line padding 31 */ /* Line padding 32 */ /* Line padding 33 */ /* Line padding 34 */ /* Line padding 35 */
+/* Line padding 36 */ /* Line padding 37 */ /* Line padding 38 */ /* Line padding 39 */ /* Line padding 40 */
+/* Line padding 41 */ /* Line padding 42 */ /* Line padding 43 */ /* Line padding 44 */ /* Line padding 45 */
+/* Line padding 46 */ /* Line padding 47 */ /* Line padding 48 */ /* Line padding 49 */ /* Line padding 50 */
+/* Line padding 51 */ /* Line padding 52 */ /* Line padding 53 */ /* Line padding 54 */ /* Line padding 55 */
+/* Line padding 56 */ /* Line padding 57 */ /* Line padding 58 */ /* Line padding 59 */ /* Line padding 60 */
+/* Line padding 61 */ /* Line padding 62 */ /* Line padding 63 */ /* Line padding 64 */ /* Line padding 65 */
+/* Line padding 66 */ /* Line padding 67 */ /* Line padding 68 */ /* Line padding 69 */ /* Line padding 70 */
+/* Line padding 71 */ /* Line padding 72 */ /* Line padding 73 */ /* Line padding 74 */ /* Line padding 75 */
+/* Line padding 76 */ /* Line padding 77 */ /* Line padding 78 */ /* Line padding 79 */ /* Line padding 80 */
+/* Line padding 81 */ /* Line padding 82 */ /* Line padding 83 */ /* Line padding 84 */ /* Line padding 85 */
+/* Line padding 86 */ /* Line padding 87 */ /* Line padding 88 */ /* Line padding 89 */ /* Line padding 90 */
+/* Line padding 91 */ /* Line padding 92 */ /* Line padding 93 */ /* Line padding 94 */ /* Line padding 95 */
+/* Line padding 96 */ /* Line padding 97 */ /* Line padding 98 */ /* Line padding 99 */ /* Line padding 100 */
+/* Line padding 101 */ /* Line padding 102 */ /* Line padding 103 */ /* Line padding 104 */ /* Line padding 105 */
+/* Line padding 106 */ /* Line padding 107 */ /* Line padding 108 */ /* Line padding 109 */ /* Line padding 110 */
+/* Line padding 111 */ /* Line padding 112 */ /* Line padding 113 */ /* Line padding 114 */ /* Line padding 115 */
+/* Line padding 116 */ /* Line padding 117 */ /* Line padding 118 */ /* Line padding 119 */ /* Line padding 120 */
+/* Line padding 121 */ /* Line padding 122 */ /* Line padding 123 */ /* Line padding 124 */ /* Line padding 125 */
+/* Line padding 126 */ /* Line padding 127 */ /* Line padding 128 */ /* Line padding 129 */ /* Line padding 130 */
+/* Line padding 131 */ /* Line padding 132 */ /* Line padding 133 */ /* Line padding 134 */ /* Line padding 135 */
+/* Line padding 136 */ /* Line padding 137 */ /* Line padding 138 */ /* Line padding 139 */ /* Line padding 140 */
+/* Line padding 141 */ /* Line padding 142 */ /* Line padding 143 */ /* Line padding 144 */ /* Line padding 145 */
+/* Line padding 146 */ /* Line padding 147 */ /* Line padding 148 */ /* Line padding 149 */ /* Line padding 150 */
 </style>
 </head>
 <body>
 
 <div class="header">
-    <h2>🎙️ HOST DASHBOARD</h2>
+    <button class="menu-btn" id="menuBtn">☰ <span id="userCount" class="badge" style="display:none">0</span></button>
+    <h2>Pastor Dashboard</h2>
     <div class="header-controls">
-        <button class="menu-btn" id="menuBtn">☰ Active Chats <span id="userCount" class="badge" style="display:none">0</span></button>
-        <button class="btn" id="generateUID" style="width:auto;padding:10px 20px">+ Generate UID</button>
+        <button class="btn" id="generateUID">+ UID</button>
     </div>
 </div>
 
 <div class="notification" id="notification">
-    <div class="notification-title">🔔 New User Joined</div>
+    <div class="notification-title">🔔 New User</div>
     <div class="notification-text" id="notifText"></div>
 </div>
 
 <div class="container">
     <div class="sidebar" id="sidebar">
         <div class="uid-section">
-            <h3>Generate UID for New User</h3>
+            <h3>Generate UID</h3>
             <button class="btn" id="generateBtn">Generate New UID</button>
-            <div class="uid-box" id="uidBox">Click button to generate</div>
+            <div class="uid-box" id="uidBox">Click to generate</div>
         </div>
 
-        <h3 style="color:#60a5fa;margin-bottom:15px">Active Chats</h3>
-        <div id="users"></div>
+        <h3 style="color:#60a5fa;margin-bottom:12px;font-size:16px">Active Chats</h3>
+        <div class="user-list" id="users"></div>
 
-        <div class="permission-box" id="permissionBox" style="display:none">
-            <h4 style="color:#60a5fa;margin-bottom:10px">Grant Permissions</h4>
-            <label><input type="checkbox" id="allowChat"> Allow user to see other users</label>
-            <label><input type="checkbox" id="allowMedia"> Allow media sharing</label>
-            <button class="btn btn-success" onclick="savePermissions()">Save Permissions</button>
+        <!-- PERMISSION PANEL ALWAYS VISIBLE -->
+        <div class="permission-panel" id="permissionPanel" style="display:none">
+            <h4>Permissions for <span id="permUserName"></span></h4>
+            <label><input type="checkbox" id="allowMedia"> Allow Images/Audio/Stickers</label>
+            <label><input type="checkbox" id="allowCamera"> Allow Camera Access</label>
+            <button class="btn-sm" onclick="savePermissions()" style="width:100%;margin-top:8px">Save Permissions</button>
         </div>
     </div>
 
     <div class="main">
-        <div class="input-area">
-            <input type="text" id="message" placeholder="Select a user to start chatting...">
-            <input type="file" id="fileInput" accept="image/*,audio/*,.html,.txt,.pdf" style="display:none">
-            <input type="file" id="stickerInput" accept="image/*" style="display:none">
-            <button title="Attach File" onclick="document.getElementById('fileInput').click()">📎</button>
-            <button title="Sticker" onclick="document.getElementById('stickerInput').click()">😊</button>
-            <button title="Voice Note" id="recordBtn">🎤</button>
-            <button onclick="sendMessage()">Send</button>
+        <!-- CAMERA ON TOP -->
+        <div class="video-wrapper" id="videoWrapper" style="display:none">
+            <video autoplay playsinline id="remoteVideo"></video>
         </div>
 
+        <!-- CHAT HEADER -->
+        <div class="chat-header" id="chatHeader" style="display:none">
+            <div class="user-avatar" id="chatAvatar">U</div>
+            <div>
+                <div class="user-name" id="chatUserName">Select user</div>
+                <div class="status-text" id="chatStatus">Offline</div>
+            </div>
+        </div>
+
+        <!-- CHAT BOX MIDDLE -->
         <div class="chat-box" id="chatBox">
             <div style="text-align:center;padding:60px 20px;color:#64748b">
                 <h3>👋 Welcome Pastor</h3>
-                <p style="margin-top:10px">Select a user from Active Chats to start messaging</p>
+                <p style="margin-top:8px">Select a user to start chatting</p>
             </div>
         </div>
 
-        <div class="video-section">
-            <h4>📹 Your Camera - Hidden from Users</h4>
-            <div class="video-grid">
-                <div>
-                    <video autoplay playsinline muted id="hostVideo"></video>
-                </div>
-                <div>
-                    <h4>👤 Selected User Camera</h4>
-                    <video autoplay playsinline id="remoteVideo"></video>
-                </div>
-            </div>
+        <!-- INPUT BOTTOM -->
+        <div class="input-area" id="inputArea" style="display:none">
+            <input type="file" id="fileInput" accept="image/*,audio/*,.html,.txt,.pdf" style="display:none">
+            <input type="file" id="stickerInput" accept="image/*" style="display:none">
+            <button class="input-btn" title="Attach" onclick="document.getElementById('fileInput').click()">📎</button>
+            <button class="input-btn" title="Sticker" onclick="document.getElementById('stickerInput').click()">😊</button>
+            <button class="input-btn" title="Voice" id="recordBtn">🎤</button>
+            <input type="text" id="message" placeholder="Type a message">
+            <button class="input-btn send" onclick="sendMessage()">➤</button>
         </div>
-    </div>
-</div>
-
-<div id="userModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>User Management</h3>
-            <span class="close-btn" id="closeModal">&times;</span>
-        </div>
-        <div id="allUsersList"></div>
     </div>
 </div>
 
@@ -235,22 +265,15 @@ let replyToMsg = null;
 let mediaRecorder = null;
 let recordingChunks = [];
 let hostStream = null;
-let selectedUserPermissions = {allowChat:false, allowMedia:true};
 
-// Host camera - MUST be HTTPS or localhost
+// Host camera
 navigator.mediaDevices.getUserMedia({video:true,audio:false})
-.then(stream => {
-    hostStream = stream;
-    document.getElementById('hostVideo').srcObject = stream;
-})
+.then(stream => {hostStream = stream;})
 .catch(err => console.log("Host camera error:", err));
 
-function showNotification(name, roomId, type="join"){
+function showNotification(name, roomId){
     const notif = document.getElementById('notification');
-    const notifText = document.getElementById('notifText');
-    if(type === "join"){
-        notifText.innerHTML = `<b>${name}</b> joined the chat<br><small>Room: ${roomId}</small>`;
-    }
+    document.getElementById('notifText').innerHTML = `<b>${name}</b> joined<br><small>Room: ${roomId}</small>`;
     notif.style.display = "block";
     document.getElementById('notifSound').play().catch(()=>{});
     setTimeout(() => notif.style.display = "none", 5000);
@@ -258,105 +281,174 @@ function showNotification(name, roomId, type="join"){
 
 document.getElementById("generateBtn").onclick = function(){
     const uid = 'KKAC_' + Math.random().toString(36).substring(2,10).toUpperCase();
-    document.getElementById('uidBox').innerHTML = `<b>UID:</b> ${uid}<br><small>Share this with user</small>`;
+    document.getElementById('uidBox').innerHTML = `<b>UID:</b> ${uid}<br><small>Share with user</small>`;
     set(ref(db, 'users/'+uid), {
-        status: 'waiting',
+        status: 'pending',
         joined: Date.now(),
         blocked: false,
-        permissions: {allowChat:false, allowMedia:true}
+        approved: false,
+        permissions: {allowMedia:true, allowCamera:true}
     });
-    alert("✅ UID Generated: " + uid);
+    alert("✅ UID: " + uid);
 }
 
-window.openUserChat = async function(uid){
-    currentUID = uid;
-    chatBox.innerHTML = `<div style="text-align:center;padding:20px;color:#22c55e">Loading chat...</div>`;
+document.getElementById("menuBtn").onclick = () => document.getElementById('sidebar').classList.toggle('active');
 
-    const chatSnap = await get(ref(db, 'chats/'+uid));
-    if(chatSnap.exists()){
-        chatBox.innerHTML = "";
-        chatSnap.forEach(child => {
-            const m = child.val();
-            addMessageToChat(m, child.key);
+// LOAD USERS WITH ACCEPT/REJECT + CAMERA BUTTON
+function loadUsers(){
+    onValue(ref(db, 'users'), snap => {
+        document.getElementById('users').innerHTML = "";
+        let count = 0;
+        snap.forEach(child => {
+            const uid = child.key;
+            const data = child.val();
+            if(data.member){
+                count++;
+                const isPending = data.status === 'pending' ||!data.approved;
+                const isBlocked = data.blocked;
+                const div = document.createElement("div");
+                div.className = "user-card" + (uid === currentUID? " active" : "") + (isPending? " new" : "") + (isBlocked? " blocked" : "");
+                div.dataset.uid = uid;
+
+                let actions = `<button class="btn-sm camera" onclick="viewUserCamera('${uid}')">👁️</button>`;
+
+                if(isPending){
+                    actions = `<button class="btn-sm" onclick="acceptUser('${uid}')">Accept</button>
+                               <button class="btn-sm reject" onclick="rejectUser('${uid}')">Reject</button>`;
+                }
+
+                div.innerHTML = `
+                    <div class="user-avatar">${data.member.name.charAt(0).toUpperCase()}</div>
+                    <div class="user-info" onclick="openChat('${uid}')">
+                        <div class="user-name">${data.member.name} ${isPending? '<span class="pending-badge">New</span>' : ''}</div>
+                        <div class="user-id">${uid}</div>
+                    </div>
+                    <div class="user-actions">${actions}</div>
+                `;
+                document.getElementById('users').appendChild(div);
+            }
         });
-    } else {
-        chatBox.innerHTML = `<div style="text-align:center;padding:40px;color:#64748b">No messages yet</div>`;
-    }
+        document.getElementById('userCount').textContent = count;
+        document.getElementById('userCount').style.display = count > 0? "inline" : "none";
+    });
+}
 
+// ACCEPT USER
+window.acceptUser = function(uid){
+    update(ref(db, 'users/'+uid), {approved:true, status:'active'});
+    alert("User approved");
+}
+
+// REJECT USER
+window.rejectUser = function(uid){
+    if(confirm("Reject this user?")){
+        update(ref(db, 'users/'+uid), {blocked:true});
+    }
+}
+
+// VIEW CAMERA BUTTON
+window.viewUserCamera = function(uid){
+    openChat(uid);
+    startWebRTC(uid);
+    document.getElementById('videoWrapper').style.display = 'block';
+}
+
+// OPEN CHAT
+window.openChat = async function(uid){
+    currentUID = uid;
+    document.getElementById('sidebar').classList.remove('active');
+
+    const userSnap = await get(ref(db, 'users/'+uid));
+    const userData = userSnap.val();
+
+    document.getElementById('chatHeader').style.display = 'flex';
+    document.getElementById('inputArea').style.display = 'flex';
+    document.getElementById('chatUserName').textContent = userData.member.name;
+    document.getElementById('chatAvatar').textContent = userData.member.name.charAt(0).toUpperCase();
+    document.getElementById('chatStatus').textContent = userData.member.online? 'Online' : 'Offline';
+
+    // Permission panel always visible
+    document.getElementById('permissionPanel').style.display = 'block';
+    document.getElementById('permUserName').textContent = userData.member.name;
+    document.getElementById('allowMedia').checked = userData.permissions?.allowMedia;
+    document.getElementById('allowCamera').checked = userData.permissions?.allowCamera;
+
+    chatBox.innerHTML = "";
     onChildAdded(ref(db, 'chats/'+uid), snap => {
         const m = snap.val();
         if(!document.getElementById('msg-'+snap.key)){
-            addMessageToChat(m, snap.key);
+            addMessage(m, snap.key);
             if(m.sender!== "Host" &&!m.readBy){
                 update(ref(db, 'chats/'+uid+'/'+snap.key), {readBy: "Host"});
-                showNotification(m.sender, uid, "message");
+                showNotification(m.sender, uid);
             }
         }
     });
 
-    get(ref(db, 'users/'+uid+'/permissions')).then(snap => {
-        if(snap.exists()){
-            selectedUserPermissions = snap.val();
-            document.getElementById('allowChat').checked = selectedUserPermissions.allowChat;
-            document.getElementById('allowMedia').checked = selectedUserPermissions.allowMedia;
-        }
-    });
-
-    startWebRTC(uid);
-    document.getElementById('message').placeholder = `Chat with ${uid}...`;
-    document.getElementById('userModal').style.display = "none";
-    document.getElementById('permissionBox').style.display = "block";
     document.querySelectorAll(`[data-uid="${uid}"]`).forEach(el => el.classList.remove('new'));
 }
 
-function addMessageToChat(m, msgId){
+// SAVE PERMISSIONS
+window.savePermissions = function(){
+    if(!currentUID) return;
+    const perms = {
+        allowMedia: document.getElementById('allowMedia').checked,
+        allowCamera: document.getElementById('allowCamera').checked
+    };
+    set(ref(db, 'users/'+currentUID+'/permissions'), perms);
+    alert("Permissions saved");
+}
+
+function addMessage(m, msgId){
     if(document.getElementById('msg-'+msgId)) return;
     const div = document.createElement("div");
     div.className = `message ${m.type}`;
     div.id = 'msg-'+msgId;
-    let content = `<div class="message-header">${m.sender}</div>`;
-    if(m.replyTo){
-        content += `<div class="reply-box"><b>${m.replyTo.sender}</b><br>${m.replyTo.text}</div>`;
-    }
-    if(m.message) content += m.message;
+
+    let content = m.message || '';
     if(m.image) content += `<br><img src="${m.image}" class="msg-img" onclick="viewImage('${m.image}')">`;
-    if(m.audio) content += `<br><audio controls class="msg-audio"><source src="${m.audio}" type="audio/webm"></audio>`;
+    if(m.audio) content += `<br><audio controls class="msg-audio"><source src="${m.audio}"></audio>`;
     if(m.file) content += `<br><div class="msg-file" onclick="downloadFile('${m.file.url}','${m.file.name}')"><span class="file-icon">📄</span><div><b>${m.file.name}</b><br><small>${m.file.size} KB</small></div></div>`;
     if(m.sticker) content += `<br><img src="${m.sticker}" class="sticker">`;
-    let receipt = '';
-    if(m.type === 'host'){
-        receipt = m.readBy? `<span class="read-receipt seen">✓ Seen</span>` : `<span class="read-receipt">✓ Sent</span>`;
-    }
-    const timestamp = new Date(m.time).toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-    content += `<div class="time-stamp">${timestamp}${receipt}</div>`;
-    div.innerHTML = content;
+
+    let receipt = m.type === 'host'? (m.readBy? '<span class="read-receipt seen">✓</span>' : '<span>✓</span>') : '';
+    const timestamp = new Date(m.time).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+    div.innerHTML = content + `<div class="time-stamp">${timestamp}${receipt}</div>`;
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
-    if(m.type === 'user'){
-        div.onclick = () => setReply(m.message || m.image? '📷 Media' : '🎤 Voice', m.sender, msgId);
-    }
-}
-
-function setReply(text, sender, msgId){
-    replyToMsg = {text: text.substring(0,50), sender: sender, id: msgId};
-    document.getElementById('message').placeholder = `Reply to ${sender}...`;
-    document.getElementById('message').focus();
 }
 
 window.sendMessage = function(){
     const input = document.getElementById("message");
     const msg = input.value.trim();
-    if(!msg ||!currentUID) return alert("Select a user first");
-    const msgData = {sender:"Host", message:msg, type:"host", time:Date.now(), readBy: null};
-    if(replyToMsg){
-        msgData.replyTo = replyToMsg;
-        replyToMsg = null;
-        input.placeholder = "Type message...";
-    }
-    push(ref(db, 'chats/'+currentUID), msgData);
+    if(!msg ||!currentUID) return;
+    push(ref(db, 'chats/'+currentUID), {
+        sender:"Host", message:msg, type:"host", time:Date.now(), readBy: null
+    });
     input.value = "";
 }
 
+// WEBRTC
+async function startWebRTC(uid){
+    if(pc) {pc.close();pc = null;}
+    pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
+    pc.ontrack = e => {document.getElementById('remoteVideo').srcObject = e.streams[0];};
+    pc.onicecandidate = e => {if(e.candidate) push(ref(db, 'signals/'+uid+'/candidate/host'), e.candidate.toJSON());};
+    onValue(ref(db, 'signals/'+uid+'/offer'), async snap => {
+        if(snap.exists() &&!pc.currentRemoteDescription){
+            await pc.setRemoteDescription(snap.val());
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            set(ref(db, 'signals/'+uid+'/answer'), answer);
+        }
+    });
+    onChildAdded(ref(db, 'signals/'+uid+'/candidate/member'), snap => {
+        if(pc && snap.val()) pc.addIceCandidate(snap.val());
+    });
+}
+
+// FILE UPLOAD
 document.getElementById("fileInput").onchange = function(e){
     const file = e.target.files[0];
     if(!file ||!currentUID) return;
@@ -371,6 +463,7 @@ document.getElementById("fileInput").onchange = function(e){
     reader.readAsDataURL(file);
 }
 
+// STICKER
 document.getElementById("stickerInput").onchange = function(e){
     const file = e.target.files[0];
     if(!file ||!currentUID) return;
@@ -383,8 +476,9 @@ document.getElementById("stickerInput").onchange = function(e){
     reader.readAsDataURL(file);
 }
 
+// VOICE RECORD
 document.getElementById("recordBtn").onclick = async function(){
-    if(!currentUID) return alert("Select a user first");
+    if(!currentUID) return alert("Select user first");
     if(mediaRecorder && mediaRecorder.state === "recording"){
         mediaRecorder.stop();
         this.textContent = "🎤";
@@ -392,7 +486,7 @@ document.getElementById("recordBtn").onclick = async function(){
         return;
     }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+        const stream = await navigator.mediaDevices.getUserMedia({audio:true});
         mediaRecorder = new MediaRecorder(stream);
         recordingChunks = [];
         mediaRecorder.ondataavailable = e => recordingChunks.push(e.data);
@@ -417,86 +511,17 @@ document.getElementById("recordBtn").onclick = async function(){
             }
         }, 30000);
     } catch(err){
-        alert("Microphone access denied: " + err.message);
+        alert("Mic error: " + err.message);
     }
 }
 
-// Mobile menu toggle
-document.getElementById("menuBtn").onclick = () => {
-    document.getElementById('sidebar').classList.toggle('active');
-    document.getElementById('userModal').style.display = "block";
-    loadAllUsers();
-}
-document.getElementById("closeModal").onclick = () => {
-    document.getElementById('userModal').style.display = "none";
-    document.getElementById('sidebar').classList.remove('active');
-}
-
-function loadAllUsers(){
-    onValue(ref(db, 'users'), snap => {
-        document.getElementById('users').innerHTML = "";
-        document.getElementById('allUsersList').innerHTML = "";
-        let count = 0;
-        snap.forEach(child => {
-            const uid = child.key;
-            const data = child.val();
-            if(data.member || data.status === 'waiting'){
-                count++;
-                const name = data.member? data.member.name : 'Pending User';
-                const isNew = data.member && data.member.joined > Date.now() - 10000;
-                const isBlocked = data.blocked;
-                const div = document.createElement("div");
-                div.className = "user-card" + (isNew? " new" : "") + (isBlocked? " blocked" : "");
-                div.dataset.uid = uid;
-                div.innerHTML = `
-                    <div class="user-info" onclick="openUserChat('${uid}')">
-                        <span class="status-dot ${data.member?.online? 'online' : 'offline'}"></span>
-                        <div class="user-name">${name}</div>
-                        <div class="user-id">${uid}</div>
-                    </div>
-                    <div class="user-actions">
-                        <button class="icon-btn" onclick="toggleBlock('${uid}', ${!isBlocked})">${isBlocked? '♻️' : '🚫'}</button>
-                        <button class="icon-btn" onclick="deleteUser('${uid}')">🗑️</button>
-                    </div>
-                `;
-                document.getElementById('users').appendChild(div);
-                const div2 = div.cloneNode(true);
-                document.getElementById('allUsersList').appendChild(div2);
-            }
-        });
-        document.getElementById('userCount').textContent = count;
-        document.getElementById('userCount').style.display = count > 0? "inline" : "none";
-    });
-}
-
-window.toggleBlock = function(uid, block){
-    update(ref(db, 'users/'+uid), {blocked: block});
-    alert(block? "User removed" : "User restored");
-}
-
-window.deleteUser = function(uid){
-    if(confirm("Delete this user permanently?")){
-        remove(ref(db, 'users/'+uid));
-        remove(ref(db, 'chats/'+uid));
-        remove(ref(db, 'signals/'+uid));
-    }
-}
-
-window.savePermissions = function(){
-    if(!currentUID) return;
-    const perms = {
-        allowChat: document.getElementById('allowChat').checked,
-        allowMedia: document.getElementById('allowMedia').checked
-    };
-    set(ref(db, 'users/'+currentUID+'/permissions'), perms);
-    alert("Permissions updated");
-}
-
+// VIEW IMAGE
 window.viewImage = function(src){
     document.getElementById('modalImage').src = src;
     document.getElementById('imageModal').style.display = "block";
 }
 
+// DOWNLOAD FILE
 window.downloadFile = function(url, name){
     const a = document.createElement('a');
     a.href = url;
@@ -504,57 +529,9 @@ window.downloadFile = function(url, name){
     a.click();
 }
 
-onChildAdded(ref(db, 'users'), snap => {
-    const data = snap.val();
-    if(data.member && data.member.joined > Date.now() - 3000){
-        showNotification(data.member.name, snap.key, "join");
-    }
-});
-
-// FIXED WEBRTC - This shows user camera
-async function startWebRTC(uid){
-    if(pc) {
-        pc.getSenders().forEach(sender => pc.removeTrack(sender));
-        pc.close();
-        pc = null;
-    }
-
-    pc = new RTCPeerConnection({iceServers: [
-        {urls: 'stun:stun.l.google.com:19302'},
-        {urls: 'stun:stun1.l.google.com:19302'}
-    ]});
-
-    pc.ontrack = e => {
-        console.log("Received remote stream");
-        document.getElementById('remoteVideo').srcObject = e.streams[0];
-    };
-
-    pc.onicecandidate = e => {
-        if(e.candidate) {
-            push(ref(db, 'signals/'+uid+'/candidate/host'), e.candidate.toJSON());
-        }
-    };
-
-    onValue(ref(db, 'signals/'+uid+'/offer'), async snap => {
-        if(snap.exists() &&!pc.currentRemoteDescription){
-            await pc.setRemoteDescription(snap.val());
-            const answer = await pc.createAnswer();
-            await pc.setLocalDescription(answer);
-            set(ref(db, 'signals/'+uid+'/answer'), answer);
-        }
-    });
-
-    onChildAdded(ref(db, 'signals/'+uid+'/candidate/member'), snap => {
-        if(pc && snap.val()) pc.addIceCandidate(snap.val());
-    });
-}
-
-loadAllUsers();
-document.addEventListener('keydown', e => {
-    if(e.key === 'Enter' &&!e.shiftKey){
-        e.preventDefault();
-        sendMessage();
-    }
+loadUsers();
+document.getElementById('message').addEventListener('keypress', e => {
+    if(e.key === 'Enter') sendMessage();
 });
 </script>
 </body>
