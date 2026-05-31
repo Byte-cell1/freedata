@@ -21,7 +21,7 @@ body{background:#0f172a;color:white;min-height:100vh;overflow-y:auto;font-size:1
 .input-area input[type="text"]{flex:1;padding:12px;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
 .input-area button{padding:12px 20px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-size:16px}
 
-/* CHAT BOX WITH WELCOME BG */
+/* CHAT BOX WITH BG */
 .chat-box{
     flex:1;
     min-height:400px;
@@ -45,17 +45,29 @@ body{background:#0f172a;color:white;min-height:100vh;overflow-y:auto;font-size:1
     border-radius:12px;
 }
 
-.message{padding:12px 16px;border-radius:18px;max-width:75%;font-size:16px;word-wrap:break-word;box-shadow:0 2px 8px rgba(0,0,0,0.4);animation:fadeIn 0.3s ease;background:rgba(0,0,0,0.6);backdrop-filter:blur(5px)}
+.message{padding:12px 16px;border-radius:18px;max-width:75%;font-size:16px;word-wrap:break-word;box-shadow:0 2px 8px rgba(0,0,0,0.4);animation:fadeIn 0.3s ease;background:rgba(0,0,0,0.6);backdrop-filter:blur(5px);cursor:pointer}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .host{background:linear-gradient(135deg, rgba(37,99,235,0.9) 0%, rgba(29,78,216,0.9) 100%);color:white;margin-left:auto;border-bottom-right-radius:4px}
 .user{background:linear-gradient(135deg, rgba(51,65,155,0.9) 0%, rgba(71,85,105,0.9) 100%);color:white;margin-right:auto;border-bottom-left-radius:4px}
 .time{font-size:10px;opacity:0.7;margin-top:6px;text-align:right}
 .msg-img{max-width:240px;border-radius:14px;margin-top:8px;display:block;border:2px solid rgba(255,255,255,0.2)}
 
-/* CAMERA SECTION LAST */
+/* REPLY BOX - WhatsApp style */
+.reply-box{
+    background:rgba(37,99,235,0.2);
+    border-left:3px solid #2563eb;
+    padding:8px 10px;
+    margin-bottom:6px;
+    border-radius:6px;
+    font-size:13px;
+    opacity:0.9;
+}
+.reply-box b{color:#60a5fa}
+
+/* CAMERA SECTION LAST - NEVER RESTARTS */
 .video-section{padding:20px;background:#0f172a;margin-top:10px}
 .video-section h4{margin-bottom:12px;font-size:17px;color:#60a5fa}
-video{width:100%;max-height:280px;background:black;border-radius:12px;border:2px solid #1e293b}
+video{width:100%;max-height:280px;background:black;border-radius:12px;border:2px solid #1e293b;object-fit:cover}
 
 .user-card{background:#334155;padding:10px;border-radius:10px;margin-top:10px;font-size:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
 .user-card:hover{background:#475569}
@@ -87,12 +99,11 @@ video{width:100%;max-height:280px;background:black;border-radius:12px;border:2px
     <div class="sidebar">
         <h3>Generated UID</h3>
         <div id="uidBox">Click button to generate</div>
-        <h3 style="margin-top:20px;">Active Chat</h3>
+        <h3 style="margin-top:20px;">Active Chats</h3>
         <div id="users"></div>
     </div>
 
     <div class="main">
-        <!-- 1. TYPING BOX ON TOP -->
         <div class="input-area">
             <input type="text" id="message" placeholder="Type message">
             <input type="file" id="imgInput" accept="image/*" style="display:none">
@@ -100,20 +111,17 @@ video{width:100%;max-height:280px;background:black;border-radius:12px;border:2px
             <button onclick="sendMessage()">Send</button>
         </div>
 
-        <!-- 2. CHAT BOX WITH BG -->
         <div class="chat-box" id="chatBox"></div>
 
-        <!-- 3. CAMERA SECTION LAST -->
         <div class="video-section">
-            <h4>📹 Your Camera</h4>
+            <h4>📹 Your Camera - Always On</h4>
             <video autoplay playsinline muted id="hostVideo"></video>
             <h4 style="margin-top:20px">👤 Member Camera</h4>
-            <video autoplay playsinline id="remoteVideo" class="remote-video"></video>
+            <video autoplay playsinline id="remoteVideo"></video>
         </div>
     </div>
 </div>
 
-<!-- MENU MODAL -->
 <div id="userModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="closeModal">&times;</span>
@@ -129,7 +137,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, push, onChildAdded, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
+ apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
   authDomain: "church-project-bfb2d.firebaseapp.com",
   databaseURL: "https://church-project-bfb2d-default-rtdb.firebaseio.com",
   projectId: "church-project-bfb2d",
@@ -146,70 +154,102 @@ const uidBox = document.getElementById("uidBox");
 let currentUID = null;
 let pc = null;
 let userCount = 0;
+let replyToMsg = null;
+
+// START HOST CAMERA ONCE - NEVER STOP IT
+navigator.mediaDevices.getUserMedia({video:true,audio:false})
+.then(stream => {
+    document.getElementById('hostVideo').srcObject = stream;
+    document.getElementById('hostVideo').play();
+})
+.catch(()=>{console.log("Camera permission denied")});
 
 function vibrate(){if(navigator.vibrate){navigator.vibrate([200,100,200])}}
 function playSound(){document.getElementById('notifSound').play().catch(()=>{})}
 function getTime(){return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}
 
-navigator.mediaDevices.getUserMedia({video:true,audio:false})
-.then(stream => { document.getElementById('hostVideo').srcObject = stream })
-.catch(()=>{});
-
 // Generate UID
 document.getElementById("generateUID").addEventListener("click", function(){
     currentUID = 'KKAC_' + Math.random().toString(36).substring(2,10).toUpperCase();
-    const link = window.location.origin + '/freedata/member.html?uid=' + currentUID;
-
     uidBox.innerHTML = `
         <div class="user-card" onclick="openUserChat('${currentUID}')">
-            <div>
-                <b>UID:</b> ${currentUID}<br>
-                <small>Tap to chat</small>
-            </div>
+            <div><b>UID:</b> ${currentUID}<br><small>Tap to chat</small></div>
         </div>
     `;
     set(ref(db, 'users/'+currentUID), {status:'waiting', joined:Date.now(), blocked:false});
-    alert("UID Generated! Copy link below");
-    loadAllUsers();
+    alert("UID Generated!");
 });
 
+// Open user chat - NO CAMERA RESTART
 window.openUserChat = function(uid){
     currentUID = uid;
     chatBox.innerHTML = "";
     loadChat(uid);
     startWebRTC(uid);
+
     get(ref(db, 'users/'+uid+'/member')).then(snap=>{
         if(snap.exists()){
             document.getElementById('users').innerHTML =
-            `<div class="user-card"><span class="status-dot online"></span>👤 ${snap.val().name}<br><small>Live</small></div>`;
+            `<div class="user-card"><span class="status-dot online"></span>👤 ${snap.val().name}<br><small>Room: ${uid}</small></div>`;
         }
     });
     document.getElementById("userModal").style.display = "none";
 }
 
-// Chat with bubbles
+// Load chat + reply feature
 function loadChat(uid){
     onChildAdded(ref(db, 'chats/'+uid), snap => {
         const m = snap.val();
         const div = document.createElement("div");
         div.className = `message ${m.type}`;
+        div.dataset.msgId = snap.key;
+
         let content = `<strong style="font-size:12px;opacity:0.8">${m.sender}</strong><br>`;
+
+        if(m.replyTo){
+            content += `<div class="reply-box"><b>${m.replyTo.sender}</b><br>${m.replyTo.text}</div>`;
+        }
+
         if(m.message) content += m.message;
         if(m.image) content += `<br><img src="${m.image}" class="msg-img">`;
         content += `<div class="time">${getTime()}</div>`;
+
         div.innerHTML = content;
         chatBox.appendChild(div);
         chatBox.scrollTop = chatBox.scrollHeight;
+
+        if(m.type === 'user'){
+            div.addEventListener('click', () => setReply(m.message || '📷 Image', m.sender, snap.key));
+        }
     });
 }
 
+function setReply(text, sender, msgId){
+    replyToMsg = {text: text.substring(0,30), sender: sender, id: msgId};
+    document.getElementById('message').placeholder = `Reply to ${sender}...`;
+    document.getElementById('message').focus();
+}
+
+// Send message with reply
 window.sendMessage = function(){
     const input = document.getElementById("message");
     const msg = input.value.trim();
     if(!msg ||!currentUID) return alert("Select user from menu first");
-    push(ref(db, 'chats/'+currentUID), {
-        sender:"Host", message:msg, type:"host", time:Date.now()
-    });
+
+    const msgData = {
+        sender:"Host",
+        message:msg,
+        type:"host",
+        time:Date.now()
+    };
+
+    if(replyToMsg){
+        msgData.replyTo = replyToMsg;
+        replyToMsg = null;
+        input.placeholder = "Type message";
+    }
+
+    push(ref(db, 'chats/'+currentUID), msgData);
     input.value = "";
 }
 
@@ -233,7 +273,7 @@ document.getElementById("closeModal").addEventListener("click", function(){
     document.getElementById("userModal").style.display = "none";
 });
 
-// Load all users + badge count
+// FIXED: Load ALL users on page load, not just new ones
 function loadAllUsers(){
     onValue(ref(db, 'users'), snap => {
         const allUsersList = document.getElementById("allUsersList");
@@ -266,14 +306,13 @@ function loadAllUsers(){
     });
 }
 
-// ✅ NOTIFICATION FOR NEW USERS - UID + general room
+// Notification for new users only
 onChildAdded(ref(db, 'users'), snap => {
     const data = snap.val();
     if(data.member && data.member.joined > Date.now() - 5000){
         vibrate();
         playSound();
-        alert(`🔔 ${data.member.name} joined chat! Room: ${snap.key}`);
-        loadAllUsers();
+        alert(`🔔 ${data.member.name} joined! Room: ${snap.key}`);
     }
 });
 
@@ -282,12 +321,13 @@ window.toggleUser = function(uid, isBlocked){
     alert(isBlocked? "User Restored" : "User Removed");
 }
 
-// WebRTC
+// WebRTC - host camera not touched here
 async function startWebRTC(uid){
     if(pc) pc.close();
     pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
-    const hostStream = await navigator.mediaDevices.getUserMedia({video:true,audio:false});
-    hostStream.getTracks().forEach(track => pc.addTrack(track, hostStream));
+    const hostStream = document.getElementById('hostVideo').srcObject;
+    if(hostStream) hostStream.getTracks().forEach(track => pc.addTrack(track, hostStream));
+
     pc.ontrack = event => {
         document.getElementById('remoteVideo').srcObject = event.streams[0];
     };
