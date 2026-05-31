@@ -18,7 +18,7 @@ body{background:#0f172a;color:white;min-height:100vh;overflow-y:auto;font-size:1
 .input-area input{flex:1;padding:12px;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
 .input-area button{padding:12px 18px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-size:16px}
 
-/* CHAT BOX WITH BACKGROUND IMAGE */
+/* CHAT BOX WITH BG IMAGE */
 .chat{
     flex:1;
     min-height:400px;
@@ -48,10 +48,22 @@ body{background:#0f172a;color:white;min-height:100vh;overflow-y:auto;font-size:1
 .time{font-size:10px;color:#cbd5e1;margin-top:6px;text-align:right}
 .img-msg{max-width:220px;border-radius:14px;margin-top:8px;display:block;border:2px solid rgba(255,255,255,0.2)}
 
+/* REPLY BOX */
+.reply-box{
+    background:rgba(37,99,235,0.2);
+    border-left:3px solid #2563eb;
+    padding:8px 10px;
+    margin-bottom:6px;
+    border-radius:6px;
+    font-size:13px;
+    opacity:0.9;
+}
+.reply-box b{color:#60a5fa}
+
 /* CAMERA SECTION LAST */
 .camera-section{padding:20px;background:#0f172a;margin-top:10px}
 .camera-section h4{margin-bottom:12px;font-size:17px;color:#22c55e}
-video{width:100%;max-height:260px;background:black;border-radius:12px;border:2px solid #1e293b}
+video{width:100%;max-height:260px;background:black;border-radius:12px;border:2px solid #1e293b;object-fit:cover}
 
 /* Join box */
 .join-box{padding:30px 20px;text-align:center}
@@ -59,6 +71,7 @@ video{width:100%;max-height:260px;background:black;border-radius:12px;border:2px
 .join-box input{width:100%;padding:14px;margin:10px 0;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
 .join-box button{width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);color:white;cursor:pointer;font-size:17px;font-weight:bold}
 .join-box small{color:#94a3b8;display:block;margin-top:10px}
+.room-id-display{color:#22c55e;font-weight:bold;margin-top:10px;font-size:14px}
 @media(max-width:768px){html{font-size:16px}}
 </style>
 </head>
@@ -72,9 +85,10 @@ video{width:100%;max-height:260px;background:black;border-radius:12px;border:2px
     <div class="join-box" id="joinBox">
         <h3>Chat with Pastor</h3>
         <input type="text" id="userName" placeholder="Enter Your Name" required>
-        <input type="text" id="roomId" placeholder="Room ID - Leave empty for general chat">
+        <input type="text" id="roomId" placeholder="Room ID - Leave empty for private chat">
         <button onclick="joinRoom()">Join Chat</button>
-        <small>If host gave you UID, paste it. If not, just enter name and click Join</small>
+        <small>If host gave you UID, paste it. If not, we’ll create private room for you</small>
+        <div class="room-id-display" id="roomDisplay" style="display:none"></div>
     </div>
 
     <!-- TYPING BOX ON TOP -->
@@ -114,7 +128,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let userName = "";
-let roomId = "general"; // Default room if no UID
+let roomId = "";
 let pc = null;
 
 // Auto-fill UID from link if present
@@ -124,7 +138,7 @@ window.addEventListener('load', () => {
     if(uid) document.getElementById('roomId').value = uid;
 });
 
-// JOIN ROOM - UID OPTIONAL
+// JOIN ROOM - UID OPTIONAL, creates unique room if empty
 window.joinRoom = async function(){
     userName = document.getElementById('userName').value.trim();
     const inputRoom = document.getElementById('roomId').value.trim();
@@ -134,13 +148,20 @@ window.joinRoom = async function(){
         return;
     }
 
-    // Use UID if provided, else use "general"
-    roomId = inputRoom || "general";
+    // If no UID, create unique room for this user only
+    if(inputRoom){
+        roomId = inputRoom; // Host gave UID
+    } else {
+        roomId = 'USER_' + Math.random().toString(36).substring(2,10).toUpperCase();
+        document.getElementById('roomId').value = roomId;
+        document.getElementById('roomDisplay').style.display = "block";
+        document.getElementById('roomDisplay').innerHTML = `Your Room ID: ${roomId}<br><small>Share this with Pastor if needed</small>`;
+    }
 
     const userRef = ref(db, 'users/'+roomId);
     const snap = await get(userRef);
 
-    // Check if blocked only if UID room exists
+    // Check if blocked only if room exists
     if(snap.exists() && snap.val().blocked){
         alert("⛔ You have been removed by host");
         return;
@@ -162,11 +183,11 @@ window.joinRoom = async function(){
     onChildAdded(ref(db, 'chats/'+roomId), (snap) => {
         const msg = snap.val();
         if(msg.sender!== userName){
-            showMsg(msg.sender, msg.message, msg.image);
+            showMsg(msg.sender, msg.message, msg.image, msg.replyTo);
         }
     });
 
-    // Register user - creates room if doesn't exist
+    // Register user - creates private room
     set(userRef, {
         member: {name:userName, joined:Date.now(), online:true},
         blocked: false,
@@ -209,13 +230,18 @@ document.getElementById('imgInput').addEventListener('change', function(e){
     reader.readAsDataURL(file);
 });
 
-// SHOW MESSAGE
-function showMsg(sender, text, img=""){
+// SHOW MESSAGE + REPLY
+function showMsg(sender, text, img="", replyTo=""){
     const chat = document.getElementById('chat');
     const div = document.createElement('div');
     div.className = 'msg ' + (sender === userName? 'user' : 'host');
 
     let content = `<strong style="font-size:12px;opacity:0.8">${sender}</strong><br>`;
+    
+    if(replyTo){
+        content += `<div class="reply-box"><b>${replyTo.sender}</b><br>${replyTo.text}</div>`;
+    }
+    
     if(text) content += text;
     if(img) content += `<br><img src="${img}" class="img-msg">`;
     content += `<div class="time">${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div>`;
@@ -225,11 +251,14 @@ function showMsg(sender, text, img=""){
     chat.scrollTop = chat.scrollHeight;
 }
 
-// WEBRTC
+// WEBRTC - user camera only, no host video
 async function startWebRTC(stream){
-    pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
+    pc = new RTCPeerConnection({
+        iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
+    });
+
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
-    pc.ontrack = () => {};
+    pc.ontrack = () => {}; // user cannot see host
 
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
@@ -248,6 +277,7 @@ async function startWebRTC(stream){
         }
     };
 
+    // Check if blocked live
     onValue(ref(db, 'users/'+roomId+'/blocked'), snap => {
         if(snap.val() === true){
             alert("⛔ You have been removed by host");
@@ -256,6 +286,7 @@ async function startWebRTC(stream){
     });
 }
 
+// Enter key to send
 document.getElementById('msgInput').addEventListener('keypress', function(e){
     if(e.key === 'Enter') sendMsg();
 });
