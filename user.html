@@ -8,103 +8,162 @@
 <style>
 html {font-size:16px}
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#0f172a;color:white;height:100vh;overflow:hidden;font-size:16px}
-.header{background:#111827;padding:15px;text-align:center;font-size:18px}
-.container{height:calc(100vh - 70px);display:flex;flex-direction:column}
-.notice{background:#1e293b;padding:15px;text-align:center;font-size:15px}
-.chat-box{flex:1;overflow-y:auto;padding:20px;font-size:16px}
-.message{padding:12px;border-radius:10px;margin-bottom:10px;max-width:70%;font-size:16px}
-.user{background:#334155}
-.host{background:#2563eb;margin-left:auto}
-.time{font-size:11px;opacity:0.7;margin-top:4px}
-.input-area{display:flex;padding:15px;background:#111827;gap:8px}
-.input-area input[type="text"]{flex:1;padding:12px;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
-.input-area button{padding:12px 20px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-size:16px}
-.join-box{padding:20px;background:#1e293b}
-.join-box input{width:100%;padding:14px;margin-bottom:10px;border:none;border-radius:10px;background:#0f172a;color:white;font-size:16px}
-.join-box button{width:100%;padding:14px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-size:17px}
-video{width:100%;max-height:300px;background:black}
-.msg-img{max-width:200px;border-radius:8px;margin-top:5px}
-@media(max-width:768px){body,input,button,message{font-size:16px}}
+body{background:#0f172a;color:white;min-height:100vh;overflow-y:auto;font-size:16px} /* scrollable */
+
+.header{background:#1e293b;padding:15px;text-align:center;font-size:18px;font-weight:bold;position:sticky;top:0;z-index:100}
+.container{min-height:calc(100vh - 52px);display:flex;flex-direction:column;padding-bottom:20px}
+
+/* 1. TYPING BOX ON TOP - STICKY */
+.input-area{
+    display:flex;
+    padding:12px;
+    background:#111827;
+    gap:8px;
+    border-bottom:2px solid #1e293b;
+    position:sticky;
+    top:52px;
+    z-index:90
+}
+.input-area input{flex:1;padding:12px;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
+.input-area button{padding:12px 18px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-size:16px}
+
+/* 2. CHAT BOX WITH WELCOME BG - NEXT */
+.chat{
+    flex:1;
+    min-height:400px;
+    padding:20px 12px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><text x="10" y="50" font-family="Arial" font-size="20" fill="white">USER</text></svg>');
+    background-size:150px;
+    border-bottom:2px solid #1e293b;
+}
+
+/* Welcome message when empty */
+.chat:empty::before{
+    content:"👋 Welcome! Wait for host to connect";
+    color:#64748b;
+    text-align:center;
+    margin:auto;
+    font-size:18px;
+    padding:40px 20px;
+}
+
+.msg{
+    padding:12px 16px;
+    border-radius:18px;
+    max-width:75%;
+    font-size:16px;
+    word-wrap:break-word;
+    box-shadow:0 2px 5px rgba(0,0,0,0.3);
+    animation:fadeIn 0.3s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.msg.user{
+    background:linear-gradient(135deg, #334155 0%, #475569 100%);
+    margin-left:auto;
+    text-align:right;
+    border-bottom-right-radius:4px;
+}
+.msg.host{
+    background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    margin-right:auto;
+    border-bottom-left-radius:4px;
+}
+.time{font-size:10px;color:#94a3b8;margin-top:6px;text-align:right}
+.img-msg{max-width:220px;border-radius:14px;margin-top:8px;display:block;border:2px solid rgba(255,255,255,0.1)}
+
+/* 3. CAMERA SECTION LAST */
+.camera-section{padding:20px;background:#0f172a;margin-top:10px}
+.camera-section h4{margin-bottom:12px;font-size:17px;color:#22c55e}
+video{width:100%;max-height:260px;background:black;border-radius:12px;border:2px solid #1e293b}
+
+/* Join box */
+.join-box{padding:30px 20px;text-align:center}
+.join-box h3{margin-bottom:15px;color:#60a5fa}
+.join-box input{width:100%;padding:14px;margin:10px 0;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
+.join-box button{width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);color:white;cursor:pointer;font-size:17px;font-weight:bold}
+
+@media(max-width:768px){html{font-size:16px}}
 </style>
 </head>
-
 <body>
 
-<div class="header">
-    <h2>USER COMMUNICATION PANEL</h2>
-</div>
+<div class="header">USER PANEL</div>
 
-<div class="container">
-    <!-- TYPING BOX ON TOP -->
-    <div class="input-area" style="display:none" id="chatInput">
-        <input type="text" id="message" placeholder="Type message">
-        <button id="sendBtn">Send</button>
-    </div>
+<div class="container" id="container">
 
-    <div class="chat-box" id="chatBox" style="display:none"></div>
-
-    <h4 style="padding:0 20px;display:none" id="yourCamLabel">Your Camera:</h4>
-    <video id="localVideo" autoplay muted playsinline style="display:none"></video>
-
-    <div style="padding:15px;display:flex;gap:8px;display:none" id="imgBox">
-        <input type="file" id="imageInput" accept="image/*" style="display:none">
-        <button onclick="document.getElementById('imageInput').click()">📷 Image</button>
-    </div>
-
+    <!-- JOIN BOX - shows first -->
     <div class="join-box" id="joinBox">
-        <input type="text" id="name" placeholder="Enter Name">
-        <input type="text" id="uid" placeholder="Enter UID">
-        <button id="joinBtn">Join</button>
+        <h3>Enter Details</h3>
+        <input type="text" id="userName" placeholder="Enter Your Name">
+        <input type="text" id="roomId" placeholder="Enter Room ID from Host">
+        <button onclick="joinRoom()">Join Room</button>
     </div>
+
+    <!-- 1. TYPING BOX ON TOP - hidden until join -->
+    <div class="input-area" id="inputArea" style="display:none">
+        <input type="file" id="imgInput" accept="image/*" style="display:none">
+        <button onclick="document.getElementById('imgInput').click()">📷</button>
+        <input type="text" id="msgInput" placeholder="Type message...">
+        <button onclick="sendMsg()">Send</button>
+    </div>
+
+    <!-- 2. CHAT WITH WELCOME BG - NEXT -->
+    <div class="chat" id="chat"></div>
+
+    <!-- 3. CAMERA SECTION LAST - SCROLL DOWN TO SEE -->
+    <div class="camera-section" id="cameraSection" style="display:none">
+        <h4>📹 Your Camera</h4>
+        <video id="localVideo" autoplay muted playsinline></video>
+    </div>
+
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
- apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
+  apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
   authDomain: "church-project-bfb2d.firebaseapp.com",
   databaseURL: "https://church-project-bfb2d-default-rtdb.firebaseio.com",
   projectId: "church-project-bfb2d",
   storageBucket: "church-project-bfb2d.firebasestorage.app",
   messagingSenderId: "433486920211",
-  appId: "1:433486920211:web:8cb750d19c05ce0d1d9de6",
+  appId: "1:433486920211:web:8cb750d19c05ce0d1d9de6","
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const chatBox = document.getElementById("chatBox");
-let currentUID = null;
-let userName = "User";
+let userName = "";
+let roomId = "";
 let pc = null;
 
+// Auto-fill UID from link
 window.addEventListener('load', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const uid = urlParams.get('uid');
-    if(uid) document.getElementById('uid').value = uid;
+    if(uid) document.getElementById('roomId').value = uid;
 });
 
-function getTime(){
-    const now = new Date();
-    return now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
-}
+// JOIN ROOM + BLOCK CHECK
+window.joinRoom = async function(){
+    userName = document.getElementById('userName').value.trim();
+    roomId = document.getElementById('roomId').value.trim();
 
-document.getElementById("joinBtn").addEventListener("click", joinRoom);
-document.getElementById("sendBtn").addEventListener("click", sendMessage);
-
-async function joinRoom(){
-    userName = document.getElementById("name").value.trim();
-    currentUID = document.getElementById("uid").value.trim();
-
-    if(userName === "" || currentUID === ""){
-        alert("Enter Name and UID");
+    if(!userName ||!roomId){
+        alert("Enter name and room ID");
         return;
     }
 
-    const snap = await get(ref(db, 'users/'+currentUID));
+    // Check if blocked
+    const snap = await get(ref(db, 'users/'+roomId));
     if(!snap.exists()){
         alert("Invalid UID. Ask host for new link");
         return;
@@ -114,104 +173,120 @@ async function joinRoom(){
         return;
     }
 
-    document.getElementById("joinBox").style.display = "none";
-    chatBox.style.display = "block";
-    document.getElementById("yourCamLabel").style.display = "block";
-    document.getElementById("localVideo").style.display = "block";
-    document.getElementById("imgBox").style.display = "flex";
-    document.getElementById("chatInput").style.display = "flex";
+    document.getElementById('joinBox').style.display = "none";
+    document.getElementById('inputArea').style.display = "flex";
+    document.getElementById('cameraSection').style.display = "block";
 
-    set(ref(db, 'users/'+currentUID+'/member'), {name:userName, joined:Date.now(), online:true});
-    loadChat(currentUID);
-    startWebRTC(currentUID);
-    alert("Connected Successfully. Wait for host");
+    // Start camera
+    navigator.mediaDevices.getUserMedia({video:true,audio:true})
+  .then(stream => {
+        document.getElementById('localVideo').srcObject = stream;
+        startWebRTC(stream);
+    })
+  .catch(err => alert("Camera error: " + err));
+
+    // Listen for host messages
+    onChildAdded(ref(db, 'chats/'+roomId), (snap) => {
+        const msg = snap.val();
+        if(msg.sender!== userName){
+            showMsg(msg.sender, msg.text, msg.image);
+        }
+    });
+
+    set(ref(db, 'users/'+roomId+'/member'), {name:userName, joined:Date.now(), online:true});
 }
 
-function loadChat(uid){
-    onChildAdded(ref(db, 'chats/'+uid), snap => {
-        const m = snap.val();
-        const div = document.createElement("div");
-        div.className = `message ${m.type}`;
+// SEND MESSAGE
+window.sendMsg = function(){
+    const input = document.getElementById('msgInput');
+    const text = input.value.trim();
+    if(!text ||!roomId) return alert("Join room first");
 
-        let content = `<strong>${m.sender}:</strong><br>`;
-        if(m.message) content += m.message;
-        if(m.image) content += `<br><img src="${m.image}" class="msg-img">`;
-        content += `<div class="time">${getTime()}</div>`;
-
-        div.innerHTML = content;
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
+    push(ref(db, 'chats/'+roomId), {
+        sender: userName,
+        message: text,
+        type: "user",
+        time: Date.now()
     });
-}
 
-function sendMessage(){
-    const input = document.getElementById("message");
-    const msg = input.value.trim();
-    if(!msg ||!currentUID) return alert("Join with UID first");
-
-    push(ref(db, 'chats/'+currentUID), {
-        sender:userName,
-        message:msg,
-        type:"user",
-        time:Date.now()
-    });
+    showMsg(userName, text);
     input.value = "";
 }
 
-document.getElementById("imageInput").addEventListener("change", function(e){
+// SEND IMAGE
+document.getElementById('imgInput').addEventListener('change', function(e){
     const file = e.target.files[0];
-    if(!file ||!currentUID) return alert("Join with UID first");
+    if(!file ||!roomId) return;
 
     const reader = new FileReader();
-    reader.onload = function(event){
-        push(ref(db, 'chats/'+currentUID), {
-            sender:userName,
-            image:event.target.result,
-            type:"user",
-            time:Date.now()
+    reader.onload = function(evt){
+        push(ref(db, 'chats/'+roomId), {
+            sender: userName,
+            image: evt.target.result,
+            type: "user",
+            time: Date.now()
         });
+        showMsg(userName, "", evt.target.result);
     }
     reader.readAsDataURL(file);
 });
 
-// WEBRTC - Member sends camera but does NOT receive host video
-async function startWebRTC(uid){
-    pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
+// SHOW MESSAGE IN BUBBLE
+function showMsg(sender, text, img=""){
+    const chat = document.getElementById('chat');
+    const div = document.createElement('div');
+    div.className = 'msg ' + (sender === userName? 'user' : 'host');
 
-    const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-    document.getElementById("localVideo").srcObject = stream;
+    let content = `<strong style="font-size:12px;opacity:0.8">${sender}</strong><br>`;
+    if(text) content += text;
+    if(img) content += `<br><img src="${img}" class="img-msg">`;
+    content += `<div class="time">${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div>`;
+
+    div.innerHTML = content;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+// WEBRTC - Send camera to host only, no receive
+async function startWebRTC(stream){
+    pc = new RTCPeerConnection({
+        iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
+    });
+
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
-
-    // REMOVED: pc.ontrack = event =>... ← This line makes member see host
-    // Now member will NOT see host video
+    pc.ontrack = () => {}; // empty = user cannot see host
 
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
-    set(ref(db, 'signals/'+uid+'/offer'), offer);
+    set(ref(db, 'signals/'+roomId+'/offer'), offer);
 
-    onValue(ref(db, 'signals/'+uid+'/answer'), async snap => {
-        if(snap.exists() &&!pc.currentRemoteDescription){
-            await pc.setRemoteDescription(snap.val());
+    onChildAdded(ref(db, 'rooms/' + roomId + '/answer'), async (snap) => {
+        const answer = snap.val();
+        if(!pc.currentRemoteDescription){
+            await pc.setRemoteDescription(answer);
         }
     });
 
-    pc.onicecandidate = event => {
-        if(event.candidate){
-            push(ref(db, 'signals/'+uid+'/candidate/member'), event.candidate.toJSON());
+    pc.onicecandidate = e => {
+        if(e.candidate){
+            push(ref(db, 'signals/'+roomId+'/candidate/member'), e.candidate);
         }
     };
 
-    onChildAdded(ref(db, 'signals/'+uid+'/candidate/host'), snap => {
-        if(pc && snap.val()) pc.addIceCandidate(snap.val());
-    });
-
-    onValue(ref(db, 'users/'+uid+'/blocked'), snap => {
+    // Check if blocked live
+    onValue(ref(db, 'users/'+roomId+'/blocked'), snap => {
         if(snap.val() === true){
             alert("⛔ You have been removed by host");
             location.reload();
         }
     });
 }
+
+// Enter key to send
+document.getElementById('msgInput').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') sendMsg();
+});
 </script>
+
 </body>
 </html>
