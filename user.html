@@ -2,26 +2,32 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>User Panel</title>
 <style>
 html {font-size:16px}
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#0f172a;color:white;min-height:100vh}
-.header{background:#1e293b;padding:15px;text-align:center;font-weight:bold;position:sticky;top:0}
-.input-area{display:flex;padding:12px;background:#111827;gap:8px;position:sticky;top:52px}
-.input-area input{flex:1;padding:12px;border:none;border-radius:10px;background:#1e293b;color:white}
-.input-area button{padding:12px 18px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer}
+.header{background:#1e293b;padding:15px;text-align:center;font-weight:bold;position:sticky;top:0;z-index:100}
+.input-area{display:flex;padding:12px;background:#111827;gap:8px;position:sticky;top:52px;z-index:90}
+.input-area input{flex:1;padding:12px;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
+.input-area button{padding:12px 18px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-size:16px}
 .chat{flex:1;min-height:400px;padding:20px 12px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.85)), url('https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=1000') center/cover}
-.msg{padding:12px 16px;border-radius:18px;max-width:75%;font-size:16px;background:rgba(0,0,0,0.6)}
-.msg.user{margin-left:auto;background:rgba(51,65,155,0.9)}
-.msg.host{margin-right:auto;background:rgba(37,99,235,0.9)}
+.msg{padding:12px 16px;border-radius:18px;max-width:75%;font-size:16px;background:rgba(0,0,0,0.6);backdrop-filter:blur(5px)}
+.msg.user{background:linear-gradient(135deg, rgba(51,65,155,0.9) 0%, rgba(71,85,105,0.9) 100%);margin-left:auto}
+.msg.host{background:linear-gradient(135deg, rgba(37,99,235,0.9) 0%, rgba(29,78,216,0.9) 100%);margin-right:auto}
 .reply-box{background:rgba(37,99,235,0.3);border-left:3px solid #2563eb;padding:8px 10px;margin-bottom:6px;border-radius:6px;font-size:13px}
 .time{font-size:10px;color:#cbd5e1;margin-top:6px;text-align:right}
+.img-msg{max-width:220px;border-radius:14px;margin-top:8px;display:block}
+.camera-section{padding:20px;background:#0f172a}
+.camera-section h4{margin-bottom:12px;color:#22c55e}
 video{width:100%;max-height:260px;background:black;border-radius:12px;border:2px solid #1e293b}
-.join-box{padding:30px 20px;text-align:center}
-.join-box input{width:100%;padding:14px;margin:10px 0;border:none;border-radius:10px;background:#1e293b;color:white}
-.join-box button{width:100%;padding:14px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-weight:bold}
+.join-box{padding:40px 20px;text-align:center}
+.join-box h3{margin-bottom:15px;color:#60a5fa;font-size:20px}
+.join-box input{width:100%;padding:14px;margin:10px 0;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
+.join-box button{width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);color:white;cursor:pointer;font-size:17px;font-weight:bold;margin-top:10px}
+.join-box small{color:#94a3b8;display:block;margin-top:10px}
+.room-id-display{color:#22c55e;font-weight:bold;margin-top:15px;font-size:14px}
 </style>
 </head>
 <body>
@@ -31,22 +37,23 @@ video{width:100%;max-height:260px;background:black;border-radius:12px;border:2px
 <div class="join-box" id="joinBox">
     <h3>Chat with Pastor</h3>
     <input type="text" id="userName" placeholder="Enter Your Name" required>
-    <input type="text" id="roomId" placeholder="Room ID - Leave empty">
-    <button onclick="joinRoom()">Join Chat</button>
-    <small style="color:#94a3b8">Leave empty = private room created for you</small>
+    <input type="text" id="roomId" placeholder="Room ID - Leave empty for private chat">
+    <button id="joinBtn">Join Chat</button>
+    <small>Leave empty = private room created for you only</small>
+    <div class="room-id-display" id="roomDisplay" style="display:none"></div>
 </div>
 
 <div class="input-area" id="inputArea" style="display:none">
     <input type="file" id="imgInput" accept="image/*" style="display:none">
-    <button onclick="imgInput.click()">📷</button>
+    <button id="imgBtn">📷</button>
     <input type="text" id="msgInput" placeholder="Type message...">
-    <button onclick="sendMsg()">Send</button>
+    <button id="sendBtn">Send</button>
 </div>
 
 <div class="chat" id="chat"></div>
 
-<div style="padding:20px">
-    <h4 style="color:#22c55e;margin-bottom:12px">📹 Your Camera</h4>
+<div class="camera-section" id="cameraSection" style="display:none">
+    <h4>📹 Your Camera - Pastor Can See This</h4>
     <video id="localVideo" autoplay muted playsinline></video>
 </div>
 
@@ -54,72 +61,133 @@ video{width:100%;max-height:260px;background:black;border-radius:12px;border:2px
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
+const firebaseConfig = {
+  apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
   authDomain: "church-project-bfb2d.firebaseapp.com",
   databaseURL: "https://church-project-bfb2d-default-rtdb.firebaseio.com",
   projectId: "church-project-bfb2d",
   storageBucket: "church-project-bfb2d.firebasestorage.app",
   messagingSenderId: "433486920211",
   appId: "1:433486920211:web:8cb750d19c05ce0d1d9de6",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 let userName = "";
 let roomId = "";
 let pc = null;
 
-window.joinRoom = async function(){
-    userName = userName = document.getElementById('userName').value.trim();
-    const inputRoom = document.getElementById('roomId').value.trim();
-    if(!userName) return alert("Enter name");
+window.addEventListener('load', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.get('uid');
+    if(uid) document.getElementById('roomId').value = uid;
+});
 
-    // CRITICAL: No "general" room. Always private
+document.getElementById('joinBtn').addEventListener('click', joinRoom);
+document.getElementById('sendBtn').addEventListener('click', sendMsg);
+document.getElementById('imgBtn').addEventListener('click', () => document.getElementById('imgInput').click());
+document.getElementById('msgInput').addEventListener('keypress', e => {if(e.key === 'Enter') sendMsg()});
+
+async function joinRoom(){
+    userName = document.getElementById('userName').value.trim();
+    const inputRoom = document.getElementById('roomId').value.trim();
+    
+    if(!userName){
+        alert("Enter your name first");
+        return;
+    }
+
+    // USER CREATES NAME + PRIVATE ROOM IF NO UID
     roomId = inputRoom || 'USER_' + Math.random().toString(36).substring(2,10).toUpperCase();
     document.getElementById('roomId').value = roomId;
 
-    const snap = await get(ref(db, 'users/'+roomId));
-    if(snap.exists() && snap.val().blocked) return alert("Removed by host");
+    try {
+        const snap = await get(ref(db, 'users/'+roomId));
+        if(snap.exists() && snap.val().blocked){
+            alert("⛔ You have been removed by host");
+            return;
+        }
 
-    joinBox.style.display = "none";
-    inputArea.style.display = "flex";
+        document.getElementById('joinBox').style.display = "none";
+        document.getElementById('inputArea').style.display = "flex";
+        document.getElementById('cameraSection').style.display = "block";
 
-    const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-    localVideo.srcObject = stream;
-    startWebRTC(stream);
+        if(!inputRoom){
+            document.getElementById('roomDisplay').style.display = "block";
+            document.getElementById('roomDisplay').innerHTML = `Your Room ID: <b>${roomId}</b><br><small>Send this to Pastor if needed</small>`;
+        }
 
-    onChildAdded(ref(db, 'chats/'+roomId), snap => {
-        const msg = snap.val();
-        if(msg.sender!== userName) showMsg(msg.sender, msg.message, msg.image, msg.replyTo);
+        // User camera ON - Host will see this
+        const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+        document.getElementById('localVideo').srcObject = stream;
+        startWebRTC(stream);
+
+        // Listen for host messages
+        onChildAdded(ref(db, 'chats/'+roomId), (snap) => {
+            const msg = snap.val();
+            if(msg.sender !== userName){
+                showMsg(msg.sender, msg.message, msg.image, msg.replyTo);
+            }
+        });
+
+        // Register user with their chosen name
+        await set(ref(db, 'users/'+roomId), {
+            member: {name:userName, joined:Date.now(), online:true},
+            blocked: false,
+            status: 'active'
+        });
+
+    } catch(err) {
+        alert("Join failed: " + err.message);
+        console.error(err);
+    }
+}
+
+function sendMsg(){
+    const text = document.getElementById('msgInput').value.trim();
+    if(!text || !roomId) return;
+    
+    push(ref(db, 'chats/'+roomId), {
+        sender: userName,
+        message: text,
+        type: "user",
+        time: Date.now()
     });
-
-    set(ref(db, 'users/'+roomId), {member: {name:userName, joined:Date.now(), online:true}, blocked: false});
-}
-
-window.sendMsg = function(){
-    const text = msgInput.value.trim();
-    if(!text) return;
-    push(ref(db, 'chats/'+roomId), {sender: userName, message: text, type: "user", time: Date.now()});
+    
     showMsg(userName, text);
-    msgInput.value = "";
+    document.getElementById('msgInput').value = "";
 }
 
-imgInput.onchange = e => {
+document.getElementById('imgInput').addEventListener('change', function(e){
     const file = e.target.files[0];
-    if(!file) return;
+    if(!file || !roomId) return;
     const reader = new FileReader();
-    reader.onload = evt => {
-        push(ref(db, 'chats/'+roomId), {sender: userName, image: evt.target.result, type: "user", time: Date.now()});
+    reader.onload = function(evt){
+        push(ref(db, 'chats/'+roomId), {
+            sender: userName,
+            image: evt.target.result,
+            type: "user",
+            time: Date.now()
+        });
         showMsg(userName, "", evt.target.result);
     }
     reader.readAsDataURL(file);
-}
+});
 
 function showMsg(sender, text, img="", replyTo=""){
+    const chat = document.getElementById('chat');
     const div = document.createElement('div');
-    div.className = 'msg ' + (sender === userName? 'user' : 'host');
-    let content = `<strong style="font-size:12px">${sender}</strong><br>`;
-    if(replyTo) content += `<div class="reply-box"><b>${replyTo.sender}</b><br>${replyTo.text}</div>`;
+    div.className = 'msg ' + (sender === userName ? 'user' : 'host');
+
+    let content = `<strong style="font-size:12px;opacity:0.8">${sender}</strong><br>`;
+    if(replyTo){
+        content += `<div class="reply-box"><b>${replyTo.sender}</b><br>${replyTo.text}</div>`;
+    }
     if(text) content += text;
-    if(img) content += `<br><img src="${img}" style="max-width:220px;border-radius:14px;margin-top:8px">`;
+    if(img) content += `<br><img src="${img}" class="img-msg">`;
     content += `<div class="time">${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div>`;
+
     div.innerHTML = content;
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
@@ -128,18 +196,31 @@ function showMsg(sender, text, img="", replyTo=""){
 async function startWebRTC(stream){
     pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
+    
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
     set(ref(db, 'signals/'+roomId+'/offer'), offer);
-    onChildAdded(ref(db, 'signals/'+roomId+'/answer'), async snap => {
-        if(!pc.currentRemoteDescription) await pc.setRemoteDescription(snap.val());
-    });
-    pc.onicecandidate = e => {
-        if(e.candidate) push(ref(db, 'signals/'+roomId+'/candidate/member'), e.candidate);
-    };
-}
 
-msgInput.onkeypress = e => {if(e.key === 'Enter') sendMsg();}
+    onChildAdded(ref(db, 'signals/'+roomId+'/answer'), async (snap) => {
+        const answer = snap.val();
+        if(!pc.currentRemoteDescription){
+            await pc.setRemoteDescription(answer);
+        }
+    });
+
+    pc.onicecandidate = e => {
+        if(e.candidate){
+            push(ref(db, 'signals/'+roomId+'/candidate/member'), e.candidate);
+        }
+    };
+
+    onValue(ref(db, 'users/'+roomId+'/blocked'), snap => {
+        if(snap.val() === true){
+            alert("⛔ Removed by host");
+            location.reload();
+        }
+    });
+}
 </script>
 </body>
 </html>
