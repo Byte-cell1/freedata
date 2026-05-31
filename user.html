@@ -5,18 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>User Panel - Advanced</title>
 <style>
-/* ========== BASE STYLES ========== */
 html {font-size:16px; scroll-behavior:smooth}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
-body{background:#0f172a;color:white;min-height:100vh;overflow-x:hidden}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#0f172a;color:white;min-height:100vh;overflow-x:hidden;width:100%;max-width:100vw}
 ::-webkit-scrollbar{width:8px}
 ::-webkit-scrollbar-track{background:#1e293b}
 ::-webkit-scrollbar-thumb{background:#2563eb;border-radius:4px}
+input,textarea,select{font-size:16px!important}
 
-/* ========== HEADER ========== */
 .header{background:#1e293b;padding:18px;text-align:center;font-weight:bold;font-size:20px;position:sticky;top:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.4);color:#60a5fa}
 
-/* ========== JOIN BOX ========== */
 .join-box{padding:50px 25px;text-align:center;min-height:calc(100vh - 56px);display:flex;flex-direction:column;justify-content:center}
 .join-box h3{margin-bottom:20px;color:#60a5fa;font-size:26px}
 .join-box input{width:100%;padding:16px;margin:12px 0;border:none;border-radius:12px;background:#1e293b;color:white;font-size:16px;border:2px solid transparent;transition:0.3s}
@@ -26,10 +24,8 @@ body{background:#0f172a;color:white;min-height:100vh;overflow-x:hidden}
 .join-box small{color:#94a3b8;display:block;margin-top:15px;font-size:13px}
 .room-id-display{color:#22c55e;font-weight:bold;margin-top:20px;font-size:15px;padding:12px;background:#1e293b;border-radius:10px}
 
-/* ========== CHAT CONTAINER ========== */
 .container{min-height:calc(100vh - 56px);display:flex;flex-direction:column;display:none}
 
-/* ========== INPUT AREA ========== */
 .input-area{display:flex;padding:15px;background:#111827;gap:8px;position:sticky;top:56px;z-index:90;border-bottom:2px solid #1e293b}
 .input-area input{flex:1;padding:14px;border:none;border-radius:12px;background:#1e293b;color:white;font-size:16px}
 .input-btn{padding:12px 18px;border:none;border-radius:12px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:white;cursor:pointer;font-size:18px;transition:0.3s}
@@ -38,10 +34,8 @@ body{background:#0f172a;color:white;min-height:100vh;overflow-x:hidden}
 .record-btn.recording{background:#dc2626;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
 
-/* ========== CHAT BOX ========== */
 .chat{flex:1;min-height:500px;padding:20px 15px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;background:linear-gradient(rgba(15,23,42,0.92), rgba(15,23,42,0.92)), url('https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=1200') center/cover;background-attachment:fixed}
 
-/* ========== MESSAGES ========== */
 .msg{padding:14px 18px;border-radius:20px;max-width:75%;font-size:16px;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);position:relative;animation:slideIn 0.3s ease}
 @keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .msg.user{background:linear-gradient(135deg, rgba(51,65,155,0.95) 0%, rgba(71,85,105,0.95) 100%);margin-left:auto;border-bottom-right-radius:5px}
@@ -52,7 +46,6 @@ body{background:#0f172a;color:white;min-height:100vh;overflow-x:hidden}
 .read-receipt{font-size:11px;margin-left:5px}
 .read-receipt.seen{color:#22c55e}
 
-/* ========== MEDIA ========== */
 .msg-img{max-width:280px;border-radius:16px;margin-top:8px;display:block;cursor:pointer;transition:0.3s}
 .msg-img:hover{transform:scale(1.05)}
 .msg-audio{width:100%;max-width:300px;margin-top:8px;border-radius:12px}
@@ -61,12 +54,10 @@ body{background:#0f172a;color:white;min-height:100vh;overflow-x:hidden}
 .file-icon{font-size:28px}
 .sticker{width:130px;height:130px;margin-top:8px;border-radius:14px}
 
-/* ========== CAMERA SECTION ========== */
 .camera-section{padding:20px;background:#0f172a;border-top:2px solid #1e293b}
 .camera-section h4{margin-bottom:12px;color:#22c55e;font-size:16px}
-video{width:100%;max-height:280px;background:black;border-radius:16px;border:3px solid #1e293b;object-fit:cover}
+video{width:100%;height:auto;aspect-ratio:16/9;background:black;border-radius:16px;border:3px solid #1e293b;object-fit:cover;max-height:280px}
 
-/* ========== MODAL ========== */
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;backdrop-filter:blur(5px)}
 .modal-content{background:#1e293b;margin:5% auto;padding:25px;width:90%;max-width:600px;border-radius:16px;max-height:85vh;overflow-y:auto;border:2px solid #2563eb}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
@@ -74,27 +65,34 @@ video{width:100%;max-height:280px;background:black;border-radius:16px;border:3px
 .close-btn{font-size:28px;cursor:pointer;color:#94a3b8;transition:0.3s}
 .close-btn:hover{color:#f1f5f9}
 
-/* ========== RESPONSIVE ========== */
+/* MOBILE OPTIMIZATION */
 @media(max-width:768px){
-   .msg{max-width:85%}
-   .msg-img{max-width:220px}
+ .header{padding:12px;font-size:18px}
+ .msg{max-width:88%;font-size:15px;padding:12px 14px}
+ .msg-img{max-width:200px}
+ .input-area{padding:10px;gap:6px}
+ .input-area input{padding:12px;font-size:15px}
+ .input-btn{padding:10px 14px;font-size:16px}
+ video{max-height:220px}
+ .join-box{padding:30px 15px}
+ .join-box input{padding:14px;font-size:15px}
+ .join-btn{padding:14px;font-size:16px}
+ .modal-content{width:95%;margin:10% auto;padding:20px}
 </style>
 </head>
 <body>
 
 <div class="header">👤 USER PANEL</div>
 
-<!-- JOIN SCREEN -->
 <div class="join-box" id="joinBox">
     <h3>Chat with Pastor</h3>
     <input type="text" id="userName" placeholder="Enter Your Name" required maxlength="30">
     <input type="text" id="roomId" placeholder="UID Code - Leave empty for private room">
     <button class="join-btn" id="joinBtn">Join Chat</button>
-    <small>Leave UID empty = we create private room for you only. Pastor will see you in menu</small>
+    <small>Leave UID empty = private room created for you only</small>
     <div class="room-id-display" id="roomDisplay" style="display:none"></div>
 </div>
 
-<!-- CHAT SCREEN -->
 <div class="container" id="chatContainer">
     <div class="input-area">
         <input type="file" id="fileInput" accept="image/*,audio/*,.html,.txt,.pdf,.doc,.docx" style="display:none">
@@ -114,7 +112,6 @@ video{width:100%;max-height:280px;background:black;border-radius:16px;border:3px
     </div>
 </div>
 
-<!-- Image Viewer Modal -->
 <div id="imageModal" class="modal">
     <div class="modal-content" style="max-width:800px;background:transparent;border:none">
         <span class="close-btn" onclick="document.getElementById('imageModal').style.display='none'">&times;</span>
@@ -126,9 +123,8 @@ video{width:100%;max-height:280px;background:black;border-radius:16px;border:3px
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-/* ========== FIREBASE CONFIG ========== */
 const firebaseConfig = {
- apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
+  apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
   authDomain: "church-project-bfb2d.firebaseapp.com",
   databaseURL: "https://church-project-bfb2d-default-rtdb.firebaseio.com",
   projectId: "church-project-bfb2d",
@@ -140,7 +136,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ========== GLOBAL VARIABLES ========== */
 let userName = "";
 let roomId = "";
 let pc = null;
@@ -149,20 +144,17 @@ let recordingChunks = [];
 let userPermissions = {allowChat:false, allowMedia:true};
 let localStream = null;
 
-/* ========== AUTO-FILL UID FROM URL ========== */
 window.addEventListener('load', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const uid = urlParams.get('uid');
     if(uid) document.getElementById('roomId').value = uid;
 });
 
-/* ========== EVENT LISTENERS ========== */
 document.getElementById('joinBtn').addEventListener('click', joinRoom);
 document.getElementById('sendBtn').addEventListener('click', sendMsg);
 document.getElementById('msgInput').addEventListener('keypress', e => {if(e.key === 'Enter') sendMsg()});
 document.getElementById('recordBtn').addEventListener('click', toggleRecording);
 
-/* ========== JOIN ROOM ========== */
 async function joinRoom(){
     userName = document.getElementById('userName').value.trim();
     const inputRoom = document.getElementById('roomId').value.trim();
@@ -176,34 +168,28 @@ async function joinRoom(){
         return;
     }
 
-    // CREATE PRIVATE ROOM IF NO UID
     roomId = inputRoom || 'USER_' + Math.random().toString(36).substring(2,10).toUpperCase();
     document.getElementById('roomId').value = roomId;
 
     try {
-        // Check if blocked
         const snap = await get(ref(db, 'users/'+roomId));
         if(snap.exists() && snap.val().blocked){
             alert("⛔ You have been removed by host");
             return;
         }
 
-        // Hide join, show chat
         document.getElementById('joinBox').style.display = "none";
         document.getElementById('chatContainer').style.display = "flex";
 
-        // Show room ID if auto-generated
         if(!inputRoom){
             document.getElementById('roomDisplay').style.display = "block";
             document.getElementById('roomDisplay').innerHTML = `Your Room ID: <b>${roomId}</b><br><small>Save this if you want to return later</small>`;
         }
 
-        // Start camera
         localStream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
         document.getElementById('localVideo').srcObject = localStream;
         startWebRTC(localStream);
 
-        // Load permissions
         get(ref(db, 'users/'+roomId+'/permissions')).then(snap => {
             if(snap.exists()){
                 userPermissions = snap.val();
@@ -211,13 +197,11 @@ async function joinRoom(){
             }
         });
 
-        // Listen for host messages + read receipts
         onChildAdded(ref(db, 'chats/'+roomId), (snap) => {
             const msg = snap.val();
             const msgId = snap.key;
             if(msg.sender !== userName){
                 showMsg(msg.sender, msg.message, msg.image, msg.audio, msg.file, msg.sticker, msg.replyTo, msgId, msg.readBy);
-                // Mark as read
                 if(msg.sender === "Host" && !msg.readBy){
                     update(ref(db, 'chats/'+roomId+'/'+msgId), {readBy: userName});
                 }
@@ -226,7 +210,6 @@ async function joinRoom(){
             }
         });
 
-        // Register user with their chosen name
         await set(ref(db, 'users/'+roomId), {
             member: {name:userName, joined:Date.now(), online:true},
             blocked: false,
@@ -234,7 +217,6 @@ async function joinRoom(){
             permissions: userPermissions
         });
 
-        // Listen for block status
         onValue(ref(db, 'users/'+roomId+'/blocked'), snap => {
             if(snap.val() === true){
                 alert("⛔ You have been removed by host");
@@ -248,14 +230,12 @@ async function joinRoom(){
     }
 }
 
-/* ========== UPDATE INPUT VISIBILITY BASED ON PERMISSIONS ========== */
 function updateInputVisibility(){
     document.getElementById('fileInput').disabled = !userPermissions.allowMedia;
     document.getElementById('stickerInput').disabled = !userPermissions.allowMedia;
     document.getElementById('recordBtn').disabled = !userPermissions.allowMedia;
 }
 
-/* ========== SEND MESSAGE ========== */
 function sendMsg(){
     const text = document.getElementById('msgInput').value.trim();
     if(!text || !roomId) return;
@@ -273,7 +253,6 @@ function sendMsg(){
     document.getElementById('msgInput').value = "";
 }
 
-/* ========== FILE UPLOAD ========== */
 document.getElementById("fileInput").onchange = function(e){
     if(!userPermissions.allowMedia) return alert("Media sharing disabled by host");
     const file = e.target.files[0];
@@ -308,7 +287,6 @@ document.getElementById("fileInput").onchange = function(e){
     reader.readAsDataURL(file);
 }
 
-/* ========== STICKER UPLOAD ========== */
 document.getElementById("stickerInput").onchange = function(e){
     if(!userPermissions.allowMedia) return alert("Stickers disabled by host");
     const file = e.target.files[0];
@@ -329,7 +307,6 @@ document.getElementById("stickerInput").onchange = function(e){
     reader.readAsDataURL(file);
 }
 
-/* ========== VOICE RECORDING ========== */
 async function toggleRecording(){
     const btn = document.getElementById('recordBtn');
     
@@ -384,7 +361,6 @@ async function toggleRecording(){
     }
 }
 
-/* ========== SHOW MESSAGE ========== */
 function showMsg(sender, text, img="", audio="", file="", sticker="", replyTo="", msgId="", readBy=""){
     const chat = document.getElementById('chat');
     const div = document.createElement('div');
@@ -418,13 +394,11 @@ function showMsg(sender, text, img="", audio="", file="", sticker="", replyTo=""
     chat.scrollTop = chat.scrollHeight;
 }
 
-/* ========== VIEW IMAGE ========== */
 window.viewImage = function(src){
     document.getElementById('modalImage').src = src;
     document.getElementById('imageModal').style.display = "block";
 }
 
-/* ========== DOWNLOAD FILE ========== */
 window.downloadFile = function(url, name){
     const a = document.createElement('a');
     a.href = url;
@@ -432,9 +406,19 @@ window.downloadFile = function(url, name){
     a.click();
 }
 
-/* ========== WEBRTC ========== */
+// FIXED WEBRTC - Sends offer, receives answer + ICE
 async function startWebRTC(stream){
-    pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
+    if(pc) {
+        pc.getSenders().forEach(sender => pc.removeTrack(sender));
+        pc.close();
+        pc = null;
+    }
+
+    pc = new RTCPeerConnection({iceServers: [
+        {urls: 'stun:stun.l.google.com:19302'},
+        {urls: 'stun:stun1.l.google.com:19302'}
+    ]});
+
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
     const offer = await pc.createOffer();
@@ -443,7 +427,7 @@ async function startWebRTC(stream){
 
     onChildAdded(ref(db, 'signals/'+roomId+'/answer'), async (snap) => {
         const answer = snap.val();
-        if(!pc.currentRemoteDescription){
+        if(!pc.currentRemoteDescription && answer){
             await pc.setRemoteDescription(answer);
         }
     });
@@ -453,11 +437,10 @@ async function startWebRTC(stream){
             push(ref(db, 'signals/'+roomId+'/candidate/member'), e.candidate.toJSON());
         }
     };
-}
 
-/* ========== AUTO SCROLL ========== */
-function scrollToBottom(){
-    document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+    pc.onconnectionstatechange = () => {
+        console.log("Connection state:", pc.connectionState);
+    };
 }
 </script>
 </body>
