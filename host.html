@@ -13,8 +13,8 @@ body{background:#0f172a;color:white;height:100vh;overflow:hidden;font-size:16px}
 .menu-btn{background:#2563eb;border:none;color:white;padding:10px 15px;border-radius:8px;cursor:pointer;font-size:16px;margin-left:8px}
 .container{display:flex;height:calc(100vh - 70px)}
 .sidebar{width:300px;background:#1e293b;padding:20px;overflow-y:auto;font-size:16px}
-.main{flex:1;display:flex;flex-direction:column;overflow-y:auto} /* scrollable */
-.input-area{display:flex;padding:15px;background:#111827;gap:8px;border-bottom:2px solid #1e293b} /* moved to top */
+.main{flex:1;display:flex;flex-direction:column;overflow-y:auto}
+.input-area{display:flex;padding:15px;background:#111827;gap:8px;border-bottom:2px solid #1e293b;position:sticky;top:0;z-index:10}
 .input-area input[type="text"]{flex:1;padding:12px;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
 .input-area button{padding:12px 20px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-size:16px}
 .chat-box{flex:1;overflow-y:auto;padding:20px;font-size:16px}
@@ -30,7 +30,7 @@ body{background:#0f172a;color:white;height:100vh;overflow:hidden;font-size:16px}
 .btn-small{padding:6px 10px;border:none;border-radius:6px;cursor:pointer;font-size:13px}
 .btn-remove{background:#dc2626;color:white}
 .btn-restore{background:#16a34a;color:white}
-.video-section{padding:15px;background:#0f172a;border-bottom:1px solid #1e293b} /* camera on top */
+.video-section{padding:15px;background:#0f172a;border-bottom:1px solid #1e293b}
 .video-section h4{margin-bottom:8px;font-size:16px}
 video{width:100%;max-height:250px;background:black;border-radius:10px}
 .msg-img{max-width:250px;border-radius:8px;margin-top:5px}
@@ -38,6 +38,7 @@ video{width:100%;max-height:250px;background:black;border-radius:10px}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000}
 .modal-content{background:#1e293b;margin:5% auto;padding:20px;width:90%;max-width:400px;border-radius:10px;max-height:80vh;overflow-y:auto}
 .close-btn{float:right;font-size:24px;cursor:pointer}
+.badge{background:#dc2626;color:white;padding:2px 8px;border-radius:12px;font-size:12px;margin-left:5px}
 @media(max-width:768px){.container{flex-direction:column}.sidebar{width:100%;height:200px} body,input,button,message{font-size:16px}}
 </style>
 </head>
@@ -47,7 +48,7 @@ video{width:100%;max-height:250px;background:black;border-radius:10px}
 <div class="header">
     <h2>HOST DASHBOARD</h2>
     <div>
-        <button class="menu-btn" id="menuBtn">☰ Users</button>
+        <button class="menu-btn" id="menuBtn">☰ Users <span id="userCount" class="badge" style="display:none">0</span></button>
         <button id="generateUID">Generate UID</button>
     </div>
 </div>
@@ -61,7 +62,6 @@ video{width:100%;max-height:250px;background:black;border-radius:10px}
     </div>
 
     <div class="main">
-        <!-- 1. TYPING BOX ON TOP -->
         <div class="input-area">
             <input type="text" id="message" placeholder="Type message">
             <input type="file" id="imgInput" accept="image/*" style="display:none">
@@ -69,7 +69,6 @@ video{width:100%;max-height:250px;background:black;border-radius:10px}
             <button onclick="sendMessage()">Send</button>
         </div>
 
-        <!-- 2. CAMERA SCROLLABLE ON TOP -->
         <div class="video-section">
             <h4>Your Camera:</h4>
             <video autoplay playsinline muted id="hostVideo"></video>
@@ -77,7 +76,6 @@ video{width:100%;max-height:250px;background:black;border-radius:10px}
             <video autoplay playsinline id="remoteVideo" class="remote-video"></video>
         </div>
 
-        <!-- 3. CHAT BELOW -->
         <div class="chat-box" id="chatBox"></div>
     </div>
 </div>
@@ -86,17 +84,20 @@ video{width:100%;max-height:250px;background:black;border-radius:10px}
 <div id="userModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" id="closeModal">&times;</span>
-        <h3>All Users - Click to Open Chat</h3>
+        <h3>All Users - Tap to Open Chat</h3>
         <div id="allUsersList" style="margin-top:15px"></div>
     </div>
 </div>
 
+<!-- NOTIFICATION SOUND -->
+<audio id="notifSound" src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE" preload="auto"></audio>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, set, onValue, update, get, child, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
- apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
+   apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
   authDomain: "church-project-bfb2d.firebaseapp.com",
   databaseURL: "https://church-project-bfb2d-default-rtdb.firebaseio.com",
   projectId: "church-project-bfb2d",
@@ -112,8 +113,10 @@ const chatBox = document.getElementById("chatBox");
 const uidBox = document.getElementById("uidBox");
 let currentUID = null;
 let pc = null;
+let userCount = 0;
 
 function vibrate(){if(navigator.vibrate){navigator.vibrate([200,100,200])}}
+function playSound(){document.getElementById('notifSound').play().catch(()=>{})}
 function getTime(){return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}
 
 navigator.mediaDevices.getUserMedia({video:true,audio:false})
@@ -135,6 +138,7 @@ document.getElementById("generateUID").addEventListener("click", function(){
     `;
     set(ref(db, 'users/'+currentUID), {status:'waiting', joined:Date.now(), blocked:false});
     alert("UID Generated! Copy link below");
+    loadAllUsers(); // Load users after UID created
 });
 
 // OPEN USER CHAT + CAMERA
@@ -144,7 +148,6 @@ window.openUserChat = function(uid){
     loadChat(uid);
     startWebRTC(uid);
 
-    // Show user in sidebar
     get(ref(db, 'users/'+uid+'/member')).then(snap=>{
         if(snap.exists()){
             document.getElementById('users').innerHTML =
@@ -180,7 +183,6 @@ window.sendMessage = function(){
     input.value = "";
 }
 
-// Image send
 document.getElementById("imgInput").addEventListener("change", function(e){
     const file = e.target.files[0];
     if(!file ||!currentUID) return;
@@ -202,47 +204,57 @@ document.getElementById("closeModal").addEventListener("click", function(){
     document.getElementById("userModal").style.display = "none";
 });
 
-// Load all users - clickable
+// FIXED: Load all users + listen for new ones
 function loadAllUsers(){
     onValue(ref(db, 'users'), snap => {
         const allUsersList = document.getElementById("allUsersList");
         allUsersList.innerHTML = "";
+        userCount = 0;
+
         snap.forEach(child => {
             const uid = child.key;
             const data = child.val();
-            const status = data.blocked? "offline" : "online";
-            const statusColor = data.blocked? "offline" : "online";
-            const btnText = data.blocked? "Restore" : "Remove";
-            const btnClass = data.blocked? "btn-restore" : "btn-remove";
+            if(data.member){ // Only show users who joined
+                userCount++;
+                const status = data.blocked? "offline" : "online";
+                const statusColor = data.blocked? "offline" : "online";
+                const btnText = data.blocked? "Restore" : "Remove";
+                const btnClass = data.blocked? "btn-restore" : "btn-remove";
 
-            const div = document.createElement("div");
-            div.className = "user-card";
-            div.innerHTML = `
-                <div onclick="openUserChat('${uid}')">
-                    <span class="status-dot ${statusColor}"></span>
-                    <b>${uid}</b><br>
-                    <small>${data.member?.name || 'Member'} - ${status}</small>
-                </div>
-                <button class="btn-small ${btnClass}" onclick="event.stopPropagation();toggleUser('${uid}', ${data.blocked})">${btnText}</button>
-            `;
-            allUsersList.appendChild(div);
+                const div = document.createElement("div");
+                div.className = "user-card";
+                div.innerHTML = `
+                    <div onclick="openUserChat('${uid}')">
+                        <span class="status-dot ${statusColor}"></span>
+                        <b>${data.member.name}</b><br>
+                        <small>${uid} - ${status}</small>
+                    </div>
+                    <button class="btn-small ${btnClass}" onclick="event.stopPropagation();toggleUser('${uid}', ${data.blocked})">${btnText}</button>
+                `;
+                allUsersList.appendChild(div);
+            }
         });
+
+        document.getElementById("userCount").textContent = userCount;
+        document.getElementById("userCount").style.display = userCount > 0? "inline" : "none";
     });
 }
+
+// FIXED: Notification for new users
+onChildAdded(ref(db, 'users'), snap => {
+    const data = snap.val();
+    if(data.member){
+        vibrate();
+        playSound();
+        alert(`🔔 ${data.member.name} joined!`);
+        loadAllUsers(); // Refresh user list
+    }
+});
 
 window.toggleUser = function(uid, isBlocked){
     update(ref(db, 'users/'+uid), {blocked:!isBlocked});
     alert(isBlocked? "User Restored" : "User Removed");
 }
-
-// Vibration
-onChildAdded(ref(db, 'users'), snap => {
-    const data = snap.val();
-    if(data.member && data.member.joined > Date.now() - 5000){
-        vibrate();
-        alert(`🔔 ${data.member.name} joined!`);
-    }
-});
 
 // WebRTC
 async function startWebRTC(uid){
