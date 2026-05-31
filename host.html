@@ -8,20 +8,76 @@
 <style>
 html {font-size:16px}
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#0f172a;color:white;height:100vh;overflow:hidden;font-size:16px}
-.header{background:#111827;padding:15px;display:flex;justify-content:space-between;align-items:center;font-size:18px}
+body{background:#0f172a;color:white;min-height:100vh;overflow-y:auto;font-size:16px} /* scrollable body */
+
+.header{background:#111827;padding:15px;display:flex;justify-content:space-between;align-items:center;font-size:18px;position:sticky;top:0;z-index:100}
 .menu-btn{background:#2563eb;border:none;color:white;padding:10px 15px;border-radius:8px;cursor:pointer;font-size:16px;margin-left:8px}
-.container{display:flex;height:calc(100vh - 70px)}
+.container{display:flex;min-height:calc(100vh - 70px)} /* removed fixed height */
 .sidebar{width:300px;background:#1e293b;padding:20px;overflow-y:auto;font-size:16px}
-.main{flex:1;display:flex;flex-direction:column;overflow-y:auto}
-.input-area{display:flex;padding:15px;background:#111827;gap:8px;border-bottom:2px solid #1e293b;position:sticky;top:0;z-index:10}
+.main{flex:1;display:flex;flex-direction:column;padding-bottom:20px}
+
+/* 1. TYPING BOX ON TOP */
+.input-area{display:flex;padding:15px;background:#111827;gap:8px;border-bottom:2px solid #1e293b;position:sticky;top:70px;z-index:90}
 .input-area input[type="text"]{flex:1;padding:12px;border:none;border-radius:10px;background:#1e293b;color:white;font-size:16px}
 .input-area button{padding:12px 20px;border:none;border-radius:10px;background:#2563eb;color:white;cursor:pointer;font-size:16px}
-.chat-box{flex:1;overflow-y:auto;padding:20px;font-size:16px}
-.message{padding:12px;margin-bottom:10px;border-radius:10px;max-width:70%;font-size:16px}
-.host{background:#2563eb;margin-left:auto}
-.user{background:#334155}
-.time{font-size:11px;opacity:0.7;margin-top:4px}
+
+/* 2. CHAT BOX WITH WELCOMING BG - ON TOP AFTER INPUT */
+.chat-box{
+    flex:1;
+    min-height:400px;
+    overflow-y:auto;
+    padding:20px 12px;
+    font-size:16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><text x="10" y="50" font-family="Arial" font-size="20" fill="white">KKAC</text></svg>');
+    background-size:150px;
+    border-bottom:2px solid #1e293b;
+}
+
+/* Welcome message when empty */
+.chat-box:empty::before{
+    content:"👋 Welcome Pastor! Select a user from menu to start chat";
+    color:#64748b;
+    text-align:center;
+    margin:auto;
+    font-size:18px;
+    padding:40px 20px;
+}
+
+.message{
+    padding:12px 16px;
+    border-radius:18px;
+    max-width:75%;
+    font-size:16px;
+    word-wrap:break-word;
+    box-shadow:0 2px 5px rgba(0,0,0,0.3);
+    animation:fadeIn 0.3s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.host{
+    background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color:white;
+    margin-left:auto;
+    border-bottom-right-radius:4px;
+}
+.user{
+    background:linear-gradient(135deg, #334155 0%, #475569 100%);
+    color:white;
+    margin-right:auto;
+    border-bottom-left-radius:4px;
+}
+.time{font-size:10px;opacity:0.7;margin-top:6px;text-align:right}
+.msg-img{max-width:240px;border-radius:14px;margin-top:8px;display:block;border:2px solid rgba(255,255,255,0.1)}
+
+/* 3. CAMERA SECTION LAST */
+.video-section{padding:20px;background:#0f172a;margin-top:10px}
+.video-section h4{margin-bottom:12px;font-size:17px;color:#60a5fa}
+video{width:100%;max-height:280px;background:black;border-radius:12px;border:2px solid #1e293b}
+
 .user-card{background:#334155;padding:10px;border-radius:10px;margin-top:10px;font-size:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
 .user-card:hover{background:#475569}
 .status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}
@@ -30,16 +86,11 @@ body{background:#0f172a;color:white;height:100vh;overflow:hidden;font-size:16px}
 .btn-small{padding:6px 10px;border:none;border-radius:6px;cursor:pointer;font-size:13px}
 .btn-remove{background:#dc2626;color:white}
 .btn-restore{background:#16a34a;color:white}
-.video-section{padding:15px;background:#0f172a;border-bottom:1px solid #1e293b}
-.video-section h4{margin-bottom:8px;font-size:16px}
-video{width:100%;max-height:250px;background:black;border-radius:10px}
-.msg-img{max-width:250px;border-radius:8px;margin-top:5px}
-.remote-video{margin-top:10px;border:2px solid #2563eb}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000}
 .modal-content{background:#1e293b;margin:5% auto;padding:20px;width:90%;max-width:400px;border-radius:10px;max-height:80vh;overflow-y:auto}
 .close-btn{float:right;font-size:24px;cursor:pointer}
 .badge{background:#dc2626;color:white;padding:2px 8px;border-radius:12px;font-size:12px;margin-left:5px}
-@media(max-width:768px){.container{flex-direction:column}.sidebar{width:100%;height:200px} body,input,button,message{font-size:16px}}
+@media(max-width:768px){.container{flex-direction:column}.sidebar{width:100%;height:auto;max-height:200px}}
 </style>
 </head>
 
@@ -62,6 +113,7 @@ video{width:100%;max-height:250px;background:black;border-radius:10px}
     </div>
 
     <div class="main">
+        <!-- 1. TYPING BOX ON TOP -->
         <div class="input-area">
             <input type="text" id="message" placeholder="Type message">
             <input type="file" id="imgInput" accept="image/*" style="display:none">
@@ -69,14 +121,16 @@ video{width:100%;max-height:250px;background:black;border-radius:10px}
             <button onclick="sendMessage()">Send</button>
         </div>
 
+        <!-- 2. CHAT BOX WITH WELCOME BG - NEXT -->
+        <div class="chat-box" id="chatBox"></div>
+
+        <!-- 3. CAMERA SECTION LAST - SCROLL DOWN TO SEE -->
         <div class="video-section">
-            <h4>Your Camera:</h4>
+            <h4>📹 Your Camera</h4>
             <video autoplay playsinline muted id="hostVideo"></video>
-            <h4 style="margin-top:15px">Member Camera:</h4>
+            <h4 style="margin-top:20px">👤 Member Camera</h4>
             <video autoplay playsinline id="remoteVideo" class="remote-video"></video>
         </div>
-
-        <div class="chat-box" id="chatBox"></div>
     </div>
 </div>
 
@@ -89,15 +143,14 @@ video{width:100%;max-height:250px;background:black;border-radius:10px}
     </div>
 </div>
 
-<!-- NOTIFICATION SOUND -->
 <audio id="notifSound" src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE" preload="auto"></audio>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, set, onValue, update, get, child, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, onChildAdded, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-   apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
+ apiKey: "AIzaSyDXeh9GNe3E8L6tE9xMA8fE2OJXCSuhLMY",
   authDomain: "church-project-bfb2d.firebaseapp.com",
   databaseURL: "https://church-project-bfb2d-default-rtdb.firebaseio.com",
   projectId: "church-project-bfb2d",
@@ -138,16 +191,14 @@ document.getElementById("generateUID").addEventListener("click", function(){
     `;
     set(ref(db, 'users/'+currentUID), {status:'waiting', joined:Date.now(), blocked:false});
     alert("UID Generated! Copy link below");
-    loadAllUsers(); // Load users after UID created
+    loadAllUsers();
 });
 
-// OPEN USER CHAT + CAMERA
 window.openUserChat = function(uid){
     currentUID = uid;
     chatBox.innerHTML = "";
     loadChat(uid);
     startWebRTC(uid);
-
     get(ref(db, 'users/'+uid+'/member')).then(snap=>{
         if(snap.exists()){
             document.getElementById('users').innerHTML =
@@ -157,13 +208,13 @@ window.openUserChat = function(uid){
     document.getElementById("userModal").style.display = "none";
 }
 
-// Load chat
+// Chat with bubbles
 function loadChat(uid){
     onChildAdded(ref(db, 'chats/'+uid), snap => {
         const m = snap.val();
         const div = document.createElement("div");
         div.className = `message ${m.type}`;
-        let content = `<strong>${m.sender}:</strong><br>`;
+        let content = `<strong style="font-size:12px;opacity:0.8">${m.sender}</strong><br>`;
         if(m.message) content += m.message;
         if(m.image) content += `<br><img src="${m.image}" class="msg-img">`;
         content += `<div class="time">${getTime()}</div>`;
@@ -195,7 +246,6 @@ document.getElementById("imgInput").addEventListener("change", function(e){
     reader.readAsDataURL(file);
 });
 
-// MENU BUTTON
 document.getElementById("menuBtn").addEventListener("click", function(){
     document.getElementById("userModal").style.display = "block";
     loadAllUsers();
@@ -204,23 +254,20 @@ document.getElementById("closeModal").addEventListener("click", function(){
     document.getElementById("userModal").style.display = "none";
 });
 
-// FIXED: Load all users + listen for new ones
 function loadAllUsers(){
     onValue(ref(db, 'users'), snap => {
         const allUsersList = document.getElementById("allUsersList");
         allUsersList.innerHTML = "";
         userCount = 0;
-
         snap.forEach(child => {
             const uid = child.key;
             const data = child.val();
-            if(data.member){ // Only show users who joined
+            if(data.member){
                 userCount++;
                 const status = data.blocked? "offline" : "online";
                 const statusColor = data.blocked? "offline" : "online";
                 const btnText = data.blocked? "Restore" : "Remove";
                 const btnClass = data.blocked? "btn-restore" : "btn-remove";
-
                 const div = document.createElement("div");
                 div.className = "user-card";
                 div.innerHTML = `
@@ -234,20 +281,18 @@ function loadAllUsers(){
                 allUsersList.appendChild(div);
             }
         });
-
         document.getElementById("userCount").textContent = userCount;
         document.getElementById("userCount").style.display = userCount > 0? "inline" : "none";
     });
 }
 
-// FIXED: Notification for new users
 onChildAdded(ref(db, 'users'), snap => {
     const data = snap.val();
     if(data.member){
         vibrate();
         playSound();
         alert(`🔔 ${data.member.name} joined!`);
-        loadAllUsers(); // Refresh user list
+        loadAllUsers();
     }
 });
 
@@ -256,7 +301,6 @@ window.toggleUser = function(uid, isBlocked){
     alert(isBlocked? "User Restored" : "User Removed");
 }
 
-// WebRTC
 async function startWebRTC(uid){
     if(pc) pc.close();
     pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
